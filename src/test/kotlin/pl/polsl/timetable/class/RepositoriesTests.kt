@@ -34,8 +34,6 @@ class RepositoriesTests {
         val className = JpaClassName("Praktyka Programowania Python", "PPP")
         val classEntry = JpaClass.create(className, ClassType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), listOf(classroom), listOf(lecturer))
 
-
-
         val className2 = JpaClassName("Tworzenie Aplikacji Internetowych", "TAI")
         val classEntry2 = JpaClass.create(className2, ClassType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), listOf(classroom), listOf(lecturer))
 
