@@ -9,3 +9,17 @@ class TimetableApplication
 fun main(args: Array<String>) {
     SpringApplication.run(TimetableApplication::class.java, *args)
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
