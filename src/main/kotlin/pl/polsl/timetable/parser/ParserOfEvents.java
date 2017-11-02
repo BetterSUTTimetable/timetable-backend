@@ -16,7 +16,7 @@ public class ParserOfEvents implements Parser {
 
     @NotNull
     @Override
-    public List<Event> parse(@NotNull BufferedReader reader) {
+    public List<Event> parse(@NotNull BufferedReader reader) throws IOException {
 
         //Sprawdzenie ilosci zajec w pliku
         String sCurrentLine;

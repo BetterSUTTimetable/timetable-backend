@@ -27,7 +27,7 @@ TRANSP:OPAQUE
 END:VEVENT
 """
 
-    lateinit var parser: Parser
+    val parser: Parser = ParserOfEvents()
 
     @Test
     fun singleEntryTest() {
