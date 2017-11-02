@@ -40,7 +40,10 @@ public class ParserOfEvents implements Parser {
                 }
                 if (sCurrentLine.contains("SUMMARY:")){
                     String[] parts = sCurrentLine.split(":",2);
-                    summary = parts[1];
+                    if(parts[1].length() == 0)
+                        summary = null;
+                    else
+                        summary = parts[1];
                 }
                 if (sCurrentLine.contains("END:VEVENT")){
                     if (uid != null && start != null && end != null && summary != null)
