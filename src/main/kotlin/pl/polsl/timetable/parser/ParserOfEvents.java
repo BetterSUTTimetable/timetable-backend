@@ -23,7 +23,6 @@ public class ParserOfEvents implements Parser {
         Instant end = null;
         String summary = null;
 
-        try {
             while((sCurrentLine = reader.readLine()) != null){
                 if (sCurrentLine.contains("UID:")){
                     String[] parts = sCurrentLine.split(":", 2);
@@ -31,39 +30,31 @@ public class ParserOfEvents implements Parser {
                 }
                 if (sCurrentLine.contains("DTSTART:")){
                     String[] parts = sCurrentLine.split(":", 2);
-                    start = changeDateFormatToISO(parts[1]);
+                    start = parseDateFromFileInISOFormat(parts[1]);
                 }
                 if (sCurrentLine.contains("DTEND:")){
                     String[] parts = sCurrentLine.split(":", 2);
-                    end = changeDateFormatToISO(parts[1]);
+                    end = parseDateFromFileInISOFormat(parts[1]);
                 }
                 if (sCurrentLine.contains("SUMMARY:")){
                     String[] parts = sCurrentLine.split(":",2);
                     summary = parts[1];
                 }
                 if (sCurrentLine.contains("END:VEVENT")){
-                    if (uid == null)
-                        uid = 0L;
-                    if (start == null)
-                        start = Instant.parse("2000-01-01T07:00:00.00Z");
-                    if (end == null)
-                        end = Instant.parse("2000-01-01T07:00:00.00Z");
-                    if (summary == null)
-                        summary = "";
-                    events.add(new ParsedEvent(uid, start, end, summary));
+                    if (uid != null && start != null && end != null && summary != null)
+                        events.add(new ParsedEvent(uid, start, end, summary));
                     uid = null;
                     start = null;
                     end = null;
                     summary = null;
                 }
             }
-        } catch (IOException e1) {}
 
         return events;
     }
 
-    //Funkcja poprawiajaca format dat w plikach .*ics na ISO
-    private Instant changeDateFormatToISO(String s){
+    //Funkcja parsujaca date w formacie ISO z pliku .*ics
+    private Instant parseDateFromFileInISOFormat(String s){
         s = new StringBuilder(s)
                 .insert(s.length()-1, "00")
                 .insert(4, "-")
