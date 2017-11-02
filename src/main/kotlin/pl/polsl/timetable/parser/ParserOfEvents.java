@@ -7,7 +7,6 @@ import java.io.IOException;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class ParserOfEvents implements Parser {
 
@@ -27,29 +26,28 @@ public class ParserOfEvents implements Parser {
         try {
             while((sCurrentLine = reader.readLine()) != null){
                 if (sCurrentLine.contains("UID:")){
-                    String[] parts = sCurrentLine.split(":");
+                    String[] parts = sCurrentLine.split(":", 2);
                     uid = Long.parseLong(parts[1]);
                 }
                 if (sCurrentLine.contains("DTSTART:")){
-                    String[] parts = sCurrentLine.split(":");
+                    String[] parts = sCurrentLine.split(":", 2);
                     start = changeDateFormatToISO(parts[1]);
                 }
                 if (sCurrentLine.contains("DTEND:")){
-                    String[] parts = sCurrentLine.split(":");
-                    //end = Instant.parse(parts[1]);
+                    String[] parts = sCurrentLine.split(":", 2);
                     end = changeDateFormatToISO(parts[1]);
                 }
                 if (sCurrentLine.contains("SUMMARY:")){
-                    String[] parts = sCurrentLine.split(":");
+                    String[] parts = sCurrentLine.split(":",2);
                     summary = parts[1];
                 }
                 if (sCurrentLine.contains("END:VEVENT")){
                     if (uid == null)
                         uid = 0L;
                     if (start == null)
-                        start = Instant.parse("20000101T063000Z");
+                        start = Instant.parse("2000-01-01T07:00:00.00Z");
                     if (end == null)
-                        end = Instant.parse("20000101T063000Z");
+                        end = Instant.parse("2000-01-01T07:00:00.00Z");
                     if (summary == null)
                         summary = "";
                     events.add(new ParsedEvent(uid, start, end, summary));
@@ -66,15 +64,15 @@ public class ParserOfEvents implements Parser {
 
     //Funkcja poprawiajaca format dat w plikach .*ics na ISO
     private Instant changeDateFormatToISO(String s){
-        String tmp = s;
+        s = new StringBuilder(s)
+                .insert(s.length()-1, "00")
+                .insert(4, "-")
+                .insert(7, "-")
+                .insert(13, ":")
+                .insert(16, ":")
+                .insert(19, ".")
+                .toString();
 
-        tmp = new StringBuilder(tmp).insert(4, "-").toString();
-        tmp = new StringBuilder(tmp).insert(7, "-").toString();
-        tmp = new StringBuilder(tmp).insert(13, ":").toString();
-        tmp = new StringBuilder(tmp).insert(16, ":").toString();
-        tmp = new StringBuilder(tmp).insert(19, ".").toString();
-        tmp = new StringBuilder(tmp).insert(tmp.length()-1, "00").toString();
-
-        return Instant.parse(tmp);
+        return Instant.parse(s);
     }
 }
