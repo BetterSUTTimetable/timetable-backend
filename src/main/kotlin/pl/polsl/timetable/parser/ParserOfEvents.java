@@ -10,11 +10,13 @@ import java.util.List;
 
 public class ParserOfEvents implements Parser {
 
-    private List<Event> events = new ArrayList<>();
+    private List<Event> events;
 
     @NotNull
     @Override
     public List<Event> parse(@NotNull BufferedReader reader) throws IOException {
+
+        events = new ArrayList<>();
 
         //Zmienne pomocnicze
         String sCurrentLine;
