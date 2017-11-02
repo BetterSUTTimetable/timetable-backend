@@ -1,4 +1,4 @@
-package pl.polsl.timetable.`class`
+package pl.polsl.timetable.course
 
 import org.springframework.data.jpa.repository.JpaRepository
 

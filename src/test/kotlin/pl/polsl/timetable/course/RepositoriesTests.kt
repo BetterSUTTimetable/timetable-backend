@@ -1,4 +1,4 @@
-package pl.polsl.timetable.`class`
+package pl.polsl.timetable.course
 
 import org.junit.After
 import org.junit.Assert
@@ -16,10 +16,10 @@ import java.time.Instant
 class RepositoriesTests {
 
     @Autowired
-    lateinit var classRepository: ClassRepository
+    lateinit var courseRepository: CourseRepository
 
     @Autowired
-    lateinit var classNameRepository: ClassNameRepository
+    lateinit var courseNameRepository: CourseNameRepository
 
     @Autowired
     lateinit var classroomRepository: ClassroomRepository
@@ -31,25 +31,25 @@ class RepositoriesTests {
     fun setUp() {
         val lecturer = JpaLecturer("Adam Domański", "AD")
         val classroom = JpaClassroom("Aula A")
-        val className = JpaClassName("Praktyka Programowania Python", "PPP")
-        val classEntry = JpaClass.create(className, ClassType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), listOf(classroom), listOf(lecturer))
+        val className = JpaCourseName("Praktyka Programowania Python", "PPP")
+        val classEntry = JpaCourse.create(className, CourseType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), listOf(classroom), listOf(lecturer))
 
-        val className2 = JpaClassName("Tworzenie Aplikacji Internetowych", "TAI")
-        val classEntry2 = JpaClass.create(className2, ClassType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), listOf(classroom), listOf(lecturer))
+        val className2 = JpaCourseName("Tworzenie Aplikacji Internetowych", "TAI")
+        val classEntry2 = JpaCourse.create(className2, CourseType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), listOf(classroom), listOf(lecturer))
 
         lecturerRepository.save(lecturer)
         classroomRepository.save(classroom)
-        classNameRepository.save(className)
-        classRepository.save(classEntry)
-        classNameRepository.save(className2)
-        classRepository.save(classEntry2)
+        courseNameRepository.save(className)
+        courseRepository.save(classEntry)
+        courseNameRepository.save(className2)
+        courseRepository.save(classEntry2)
     }
 
     @Test
     fun readingWorks() {
-        Assert.assertEquals(2, classRepository.findAll().size)
+        Assert.assertEquals(2, courseRepository.findAll().size)
 
-        val names = classRepository.findAll().map { it.name.fullName }.toSet()
+        val names = courseRepository.findAll().map { it.name.fullName }.toSet()
 
         Assert.assertTrue(names.contains("Praktyka Programowania Python"))
         Assert.assertTrue(names.contains("Tworzenie Aplikacji Internetowych"))
@@ -57,10 +57,10 @@ class RepositoriesTests {
 
     @After
     fun tearDown() {
-        classRepository.deleteAll()
+        courseRepository.deleteAll()
         lecturerRepository.deleteAll()
         classroomRepository.deleteAll()
-        classNameRepository.deleteAll()
+        courseNameRepository.deleteAll()
     }
 
 }
