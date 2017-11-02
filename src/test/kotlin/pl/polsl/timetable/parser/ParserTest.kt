@@ -3,39 +3,41 @@ package pl.polsl.timetable.parser
 import org.junit.Assert
 import org.junit.Test
 import java.io.BufferedReader
+import java.io.File
+import java.io.FileReader
 import java.io.StringReader
 import java.time.Instant
 
 class ParserTest {
-    private val testInput = """BEGIN:VCALENDAR
-PRODID:-//ATS4//Plan zajęć.//PL
-VERSION:2.0
-CALSCALE:GREGORIAN
-METHOD:PUBLISH
-X-WR-CALNAME:Plan zajęć.
-X-WR-TIMEZONE:Europe/Warsaw
-BEGIN:VEVENT
-DTSTART:20171003T063000Z
-DTEND:20171003T080000Z
-DTSTAMP:20171031T110952Z
-UID:20171003063000
-CLASS:PUBLIC
-SEQUENCE:0
-STATUS:CONFIRMED
-SUMMARY:*PPP (sek.4,5,6) lab AD 827 910 914
-TRANSP:OPAQUE
-END:VEVENT
-"""
-
     val parser: Parser = ParserOfEvents()
+    val file = File(ParserTest::class.java.getResource("test.ics").toURI())
 
     @Test
     fun singleEntryTest() {
-        val event = parser.parse(BufferedReader(StringReader(testInput))).first()
+        val sampleEntries = listOf(
+                ParsedEvent(
+                        uid = 20180123073000L,
+                        start = Instant.parse("2018-01-23T07:30:00.00Z"),
+                        end = Instant.parse("2018-01-23T09:00:00.00Z"),
+                        summary = "ORII (gr.2) ćw JaWi 621a"
+                ),
+                ParsedEvent(
+                        uid = 20171002080000,
+                        start = Instant.parse("2017-10-02T08:00:00.00Z"),
+                        end = Instant.parse("2017-10-02T09:30:00.00Z"),
+                        summary = "*TAI (sek.4-9) proj MBar 545"
+                ),
+                ParsedEvent(
+                        uid = 20171002100000,
+                        start = Instant.parse("2017-10-02T10:00:00.00Z"),
+                        end = Instant.parse("2017-10-02T11:30:00.00Z"),
+                        summary = "JO ćw Wydz.Gór.SJO B327 545 424 B 327"
+                )
+        )
+        val events = parser.parse(BufferedReader(FileReader(file)))
 
-        Assert.assertEquals(20171003063000L, event.uid)
-        Assert.assertEquals("*PPP (sek.4,5,6) lab AD 827 910 914", event.summary)
-        Assert.assertEquals(Instant.parse("2017-10-03T06:30:00.00Z"), event.start)
-        Assert.assertEquals(Instant.parse("2017-10-03T08:00:00.00Z"), event.end)
+        sampleEntries.forEach {
+            Assert.assertTrue(it.toString(), events.contains(it))
+        }
     }
 }
