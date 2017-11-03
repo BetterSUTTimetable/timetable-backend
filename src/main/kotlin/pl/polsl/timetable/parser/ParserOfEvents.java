@@ -16,6 +16,7 @@ public class ParserOfEvents implements Parser {
     @Override
     public List<Event> parse(@NotNull BufferedReader reader) throws IOException {
 
+        events = null;
         events = new ArrayList<>();
 
         //Zmienne pomocnicze
