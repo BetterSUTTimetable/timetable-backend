@@ -1,13 +1,11 @@
 package pl.polsl.timetable.scraper
 
-import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
-import org.jsoup.nodes.Element
-import org.jsoup.select.Elements
 
 class InnerCategoryScraper(
         private val document: Document,
-        private val innerScraperFactory: InnerScraperFactory
+        private val innerScraperFactory: InnerScraperFactory,
+        private val timetablePageFactory: TimetablePageFactory
 ): CategoryScraper {
 
     override fun scrape(): Category {
@@ -20,8 +18,9 @@ class InnerCategoryScraper(
                 .filter {
                     it.second.isNotEmpty()
                 }
-                .map { (li, divs) ->
-                    val id = divs.first().id().substring(4).toLong()
+                .map { it.second }
+                .map { it ->
+                    val id = it.first().id().substring(4).toLong()
                     innerScraperFactory.create(id).scrape()
                 }
                 .toList()
@@ -32,10 +31,10 @@ class InnerCategoryScraper(
                 }
                 .map { it.first }
                 .map { it.select("a").attr("href") }
-                .map(::DefaultTimetablePage)
+                .map(timetablePageFactory::create)
                 .toList()
-
 
         return DefaultCategory(name, categories, timetables)
     }
 }
+

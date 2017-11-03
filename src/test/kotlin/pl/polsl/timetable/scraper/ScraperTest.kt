@@ -8,7 +8,7 @@ class ScraperTest {
     @Test
     fun noExceptionTest() {
         val document = Jsoup.connect("https://plan.polsl.pl/left_menu.php").get()
-        val category = MainCategoryScraper(document, PageGettingInnerScraperFactory()).scrape()
+        val category = MainCategoryScraper(document, FetchingInnerScraperFactory()).scrape()
         Assert.assertTrue(category.subcategories.size > 0)
     }
 }
