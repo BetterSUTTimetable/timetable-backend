@@ -13,7 +13,7 @@ class ParserTest {
     val file = File(ParserTest::class.java.getResource("test.ics").toURI())
 
     @Test
-    fun singleEntryTest() {
+    fun selectedEntriesTest() {
         val sampleEntries = listOf(
                 ParsedEvent(
                         uid = 20180123073000L,
