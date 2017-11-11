@@ -124,7 +124,12 @@
 					<compilerPlugins>
 						<plugin>spring</plugin>
                         <plugin>jpa</plugin>
-                    </compilerPlugins>
+						<plugin>no-arg</plugin>
+					</compilerPlugins>
+
+					<pluginOptions>
+						<option>no-arg:annotation=pl.polsl.timetable.GenerateNoArg</option>
+					</pluginOptions>
 					<jvmTarget>1.8</jvmTarget>
 				</configuration>
 				<executions>
