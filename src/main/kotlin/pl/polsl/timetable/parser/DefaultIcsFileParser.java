@@ -8,18 +8,18 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ParserOfEvents implements Parser {
+public class DefaultIcsFileParser implements IcsFileParser {
 
     @NotNull
     @Override
-    public List<Event> parse(@NotNull BufferedReader reader) throws IOException {
+    public List<IcsEvent> parse(@NotNull BufferedReader reader) throws IOException {
 
-        final List<Event> events = new ArrayList<>();
+        final List<IcsEvent> events = new ArrayList<>();
         String currentLine;
 
         while((currentLine = reader.readLine()) != null) {
             if ("BEGIN:VEVENT".equals(currentLine)) {
-                Event event = parseSingleSection(reader);
+                IcsEvent event = parseSingleSection(reader);
                 if (event != null) {
                     events.add(event);
                 }
@@ -29,7 +29,7 @@ public class ParserOfEvents implements Parser {
         return events;
     }
 
-    private Event parseSingleSection(@NotNull BufferedReader reader) throws IOException {
+    private IcsEvent parseSingleSection(@NotNull BufferedReader reader) throws IOException {
         String currentLine;
         Long uid = null;
         Instant start = null;
@@ -56,7 +56,7 @@ public class ParserOfEvents implements Parser {
                     }
                 } else if ("END:VEVENT".equals(currentLine)) {
                     if (uid != null && start != null && end != null && summary != null) {
-                        return new ParsedEvent(uid, start, end, summary);
+                        return new DefaultIcsEvent(uid, start, end, summary);
                     } else {
                         return null;
                     }

@@ -2,7 +2,7 @@ package pl.polsl.timetable.parser
 
 import java.time.Instant
 
-interface Event {
+interface IcsEvent {
     val uid: Long
     val start: Instant
     val end: Instant
