@@ -32,10 +32,10 @@ class RepositoriesTests {
         val lecturer = JpaLecturer("Adam Domański", "AD")
         val classroom = JpaClassroom("Aula A")
         val className = JpaCourseName("Praktyka Programowania Python", "PPP")
-        val classEntry = JpaCourse.create(className, CourseType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), listOf(classroom), listOf(lecturer))
+        val classEntry = JpaCourse.create(className, CourseType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), setOf(classroom), setOf(lecturer))
 
         val className2 = JpaCourseName("Tworzenie Aplikacji Internetowych", "TAI")
-        val classEntry2 = JpaCourse.create(className2, CourseType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), listOf(classroom), listOf(lecturer))
+        val classEntry2 = JpaCourse.create(className2, CourseType.Lecture, Instant.ofEpochMilli(123214L), Duration.ofMinutes(90L), setOf(classroom), setOf(lecturer))
 
         lecturerRepository.save(lecturer)
         classroomRepository.save(classroom)

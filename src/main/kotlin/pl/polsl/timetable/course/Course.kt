@@ -8,7 +8,7 @@ interface Course {
     val duration: Duration
     val name: CourseName
     val courseType: CourseType
-    val classrooms: List<Classroom>
-    val lecturers: List<Lecturer>
+    val classrooms: Set<Classroom>
+    val lecturers: Set<Lecturer>
 }
 

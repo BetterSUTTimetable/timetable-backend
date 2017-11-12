@@ -1,15 +1,21 @@
-package pl.polsl.timetable.scraper
+package pl.polsl.timetable.synchronization.scraper
 
 import org.jsoup.Jsoup
 import org.junit.Assert
-import org.junit.Before
 import org.junit.Test
+import org.mockito.Mockito
+import pl.polsl.timetable.course.DefaultLecturer
 import java.io.File
+import java.net.URL
 
 class ParsedTimetablePageTest {
     private val page = File(ParsedTimetablePageTest::class.java.getResource("timetable_page.html").toURI())
     private val document = Jsoup.parse(page, "iso-8859-2")
-    private val timetable: TimetablePage = ParsedTimetablePage(document)
+    private val timetable: TimetablePage = ParsedTimetablePage(document, this::createIcsFile, this::createLecturer)
+
+    init{
+        document.setBaseUri("https://plan.polsl.pl")
+    }
 
     @Test
     fun sampleClassNamesTest() {
@@ -36,10 +42,9 @@ class ParsedTimetablePageTest {
         )
 
         for (value in excpectedRooms) {
-            Assert.assertEquals(
+            Assert.assertTrue(
                     "Classroom $value: no found in ${timetable.classrooms}",
-                    value,
-                    timetable.classrooms[value]?.room
+                    timetable.classrooms.any { it.room == value }
             )
         }
     }
@@ -53,11 +58,23 @@ class ParsedTimetablePageTest {
         )
 
         for (value in excpectedLectureres) {
-            Assert.assertEquals(
+            Assert.assertTrue(
                     "Lecturer $value: no found in ${timetable.lecturers}",
-                    value,
-                    timetable.lecturers[value]?.shortName
+                    timetable.lecturers.any { it.shortName == value }
             )
         }
     }
+
+    @Test
+    fun icsTest() {
+        //just to create it - assertion called indirectely
+        val file = timetable.icsFile
+    }
+
+    private fun createIcsFile(url: String): IcsFile {
+        Assert.assertEquals("https://plan.polsl.pl/plan.php?type=0&id=652&cvsfile=true&wd=1", url)
+        return Mockito.mock(IcsFile::class.java)
+    }
+
+    private fun createLecturer(name: String, url: URL) = DefaultLecturer(name, name)
 }

@@ -1,4 +1,4 @@
-package pl.polsl.timetable.parser
+package pl.polsl.timetable.synchronization.parser
 
 import java.time.Instant
 

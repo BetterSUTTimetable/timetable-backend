@@ -1,4 +1,4 @@
-package pl.polsl.timetable.scraper
+package pl.polsl.timetable.synchronization.scraper
 
 interface TimetablePageFactory {
     fun create(url: String): TimetablePage

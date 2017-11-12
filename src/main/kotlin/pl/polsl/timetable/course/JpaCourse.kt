@@ -18,10 +18,10 @@ class JpaCourse(
         private val durationMillis: Long,
 
         @ManyToMany
-        override val classrooms: List<JpaClassroom>,
+        override val classrooms: Set<JpaClassroom>,
 
         @ManyToMany
-        override val lecturers: List<JpaLecturer>
+        override val lecturers: Set<JpaLecturer>
 ): Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +42,7 @@ class JpaCourse(
 
 
     companion object {
-        fun create(name: JpaCourseName, courseType: CourseType, beginTime: Instant, duration: Duration, classrooms: List<JpaClassroom>, lecturers: List<JpaLecturer>): JpaCourse {
+        fun create(name: JpaCourseName, courseType: CourseType, beginTime: Instant, duration: Duration, classrooms: Set<JpaClassroom>, lecturers: Set<JpaLecturer>): JpaCourse {
             return JpaCourse(
                     name,
                     courseType,

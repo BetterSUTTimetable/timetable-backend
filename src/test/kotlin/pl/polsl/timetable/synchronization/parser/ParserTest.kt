@@ -1,4 +1,4 @@
-package pl.polsl.timetable.parser
+package pl.polsl.timetable.synchronization.parser
 
 import org.junit.Assert
 import org.junit.Test
@@ -33,10 +33,12 @@ class ParserTest {
                         summary = "JO ćw Wydz.Gór.SJO B327 545 424 B 327"
                 )
         )
-        val events = parser.parse(BufferedReader(FileReader(file)))
+        BufferedReader(FileReader(file)).use {
+            val events = parser.parse(it)
 
-        sampleEntries.forEach {
-            Assert.assertTrue(it.toString(), events.contains(it))
+            sampleEntries.forEach {
+                Assert.assertTrue(it.toString(), events.contains(it))
+            }
         }
     }
 }
