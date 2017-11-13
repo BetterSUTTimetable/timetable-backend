@@ -2,28 +2,44 @@ package pl.polsl.timetable.synchronization
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
-import pl.polsl.timetable.course.ClassroomRepository
-import pl.polsl.timetable.course.CourseNameRepository
-import pl.polsl.timetable.course.CourseRepository
-import pl.polsl.timetable.course.LecturerRepository
-import pl.polsl.timetable.synchronization.scraper.TimetablePage
+import pl.polsl.timetable.course.*
+import pl.polsl.timetable.course.category.JpaCategory
+import pl.polsl.timetable.course.lecturer.LecturerService
+import pl.polsl.timetable.course.name.CourseNameService
+import pl.polsl.timetable.course.room.ClassroomService
 
 @Service
 class DefaultCourseBuildingService(
         @Autowired
-        private val lecturerRepository: LecturerRepository,
+        private val lecturerService: LecturerService,
 
         @Autowired
-        private val classroomRepository: ClassroomRepository,
+        private val classroomService: ClassroomService,
 
         @Autowired
         private val courseRepository: CourseRepository,
 
         @Autowired
-        private val courseNameRepository: CourseNameRepository
+        private val courseNameService: CourseNameService
 ): CourseBuildingService {
 
-    override fun insertPageData(page: TimetablePage) {
-
+    override fun updateCourses(category: JpaCategory, courses: List<Course>) {
+        for (course in courses) {
+            with (course) {
+                val jpaLecturers = lecturers.map { lecturerService.findOrCreate(it) }.toSet()
+                val jpaClassrooms = classrooms.map { classroomService.findOrCreate(it) }.toSet()
+                val jpaCourseName = courseNameService.findOrCreate(name)
+                val jpaCourse = JpaCourse.create(
+                        name = jpaCourseName,
+                        courseType = courseType,
+                        classrooms = jpaClassrooms,
+                        lecturers = jpaLecturers,
+                        beginTime = beginTime,
+                        duration = duration,
+                        category = category
+                )
+                courseRepository.save(jpaCourse)
+            }
+        }
     }
 }

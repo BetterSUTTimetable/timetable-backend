@@ -1,7 +1,7 @@
 package pl.polsl.timetable.synchronization.scraper
 
 import org.jsoup.nodes.Document
-import pl.polsl.timetable.course.Lecturer
+import pl.polsl.timetable.course.lecturer.Lecturer
 import java.util.*
 
 class ParsedLecturer(private val document: Document, override val shortName: String): Lecturer {

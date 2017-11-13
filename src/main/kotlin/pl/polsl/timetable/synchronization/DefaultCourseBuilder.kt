@@ -1,20 +1,24 @@
 package pl.polsl.timetable.synchronization
 
 import pl.polsl.timetable.course.*
+import pl.polsl.timetable.course.lecturer.Lecturer
+import pl.polsl.timetable.course.name.DefaultCourseName
+import pl.polsl.timetable.course.room.Classroom
 import pl.polsl.timetable.synchronization.parser.IcsEvent
 import pl.polsl.timetable.synchronization.parser.IcsFileParser
 import pl.polsl.timetable.synchronization.scraper.TimetablePage
 import java.time.Duration
-import java.util.regex.Pattern
 
 class DefaultCourseBuilder(
         private val parser: IcsFileParser
 ): CoursesBuilder {
     override fun build(timetablePage: TimetablePage): List<Course> {
-        val events = parser.parse(timetablePage.icsFile.content)
-        return events
-                .map { createCourse(timetablePage, it) }
-                .toList()
+        timetablePage.icsFile.content.use {
+            val events = parser.parse(it)
+            return events
+                    .map { createCourse(timetablePage, it) }
+                    .toList()
+        }
     }
 
     private fun createCourse(timetablePage: TimetablePage, event: IcsEvent): Course {
@@ -28,7 +32,7 @@ class DefaultCourseBuilder(
 
         val longCourseName = timetablePage.classNames[shortCourseName] ?: shortCourseName
 
-        val courseName = DefaultCourseName(shortCourseName, longCourseName)
+        val courseName = DefaultCourseName(shortName = shortCourseName, fullName = longCourseName)
 
         val beginTime = event.start
 
@@ -45,8 +49,8 @@ class DefaultCourseBuilder(
     }
 
     private fun splitSummary(summary: String): Pair<CourseType, List<String>> {
-        for (type in CourseType.values()) {
-            val regex = Regex("\\s(\\Q${type.name}\\E)(\\s|$)")
+        for ((name, type) in CourseType.shortNames()) {
+            val regex = Regex("\\s(\\Q$name\\E)(\\s|\$)")
             if (summary.contains(regex)) {
                 return type to summary.split(regex, 2)
             }
@@ -61,8 +65,8 @@ class DefaultCourseBuilder(
             val regex = Regex("\\b(\\Q${lecturer.shortName}\\E)\\b")
             if (processedString.contains(regex)) {
                 processedString = processedString.replace(regex, "")
+                lecturers.add(lecturer)
             }
-            lecturers.add(lecturer)
         }
         return lecturers to processedString
     }
@@ -74,8 +78,8 @@ class DefaultCourseBuilder(
             val regex = Regex("\\b(\\Q${classroom.room}\\E)\\b")
             if (processedString.contains(regex)) {
                 processedString = processedString.replace(regex, "")
+                classrooms.add(classroom)
             }
-            classrooms.add(classroom)
         }
         return classrooms to processedString
     }

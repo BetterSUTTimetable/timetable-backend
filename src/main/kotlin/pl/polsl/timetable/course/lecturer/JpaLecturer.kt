@@ -1,13 +1,13 @@
-package pl.polsl.timetable.course
+package pl.polsl.timetable.course.lecturer
 
 import javax.persistence.*
 
-@Entity(name = "course_name")
-class JpaCourseName(
+@Entity(name = "lecturer")
+class JpaLecturer(
         override val fullName: String,
 
         override val shortName: String
-) : CourseName {
+) : Lecturer {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, name = "id")
@@ -16,5 +16,4 @@ class JpaCourseName(
     val id: Long
         @Transient
         get() = _id
-
 }

@@ -4,7 +4,7 @@ import org.jsoup.Jsoup
 import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
-import pl.polsl.timetable.course.DefaultLecturer
+import pl.polsl.timetable.course.lecturer.DefaultLecturer
 import java.io.File
 import java.net.URL
 

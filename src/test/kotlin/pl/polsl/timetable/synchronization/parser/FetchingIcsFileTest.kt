@@ -9,8 +9,8 @@ import java.io.FileReader
 import java.net.URL
 
 class FetchingIcsFileTest {
-    val fileURL = ParserTest::class.java.getResource("test.ics").toURI().toURL()
-    val file = File(ParserTest::class.java.getResource("test.ics").toURI())
+    val fileURL = FetchingIcsFileTest::class.java.getResource("test.ics").toURI().toURL()
+    val file = File(FetchingIcsFileTest::class.java.getResource("test.ics").toURI())
 
     @Test
     fun localFileTest() {

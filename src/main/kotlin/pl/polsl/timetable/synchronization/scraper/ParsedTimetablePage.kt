@@ -1,7 +1,9 @@
 package pl.polsl.timetable.synchronization.scraper
 
 import org.jsoup.nodes.Document
-import pl.polsl.timetable.course.*
+import pl.polsl.timetable.course.lecturer.Lecturer
+import pl.polsl.timetable.course.room.Classroom
+import pl.polsl.timetable.course.room.DefaultClassroom
 import java.net.URL
 
 class ParsedTimetablePage(
@@ -55,8 +57,7 @@ class ParsedTimetablePage(
     override val icsFile: IcsFile by lazy {
         val link = document
                 .select(".data a")
-                .filter { it.text() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google"}
-                .first()
+                .first { it.text() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google"}
                 .absUrl("href")
 
         icsFileFactory(link)

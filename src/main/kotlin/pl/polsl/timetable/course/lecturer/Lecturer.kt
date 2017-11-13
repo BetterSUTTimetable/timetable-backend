@@ -1,4 +1,4 @@
-package pl.polsl.timetable.course
+package pl.polsl.timetable.course.lecturer
 
 interface Lecturer {
     val fullName: String

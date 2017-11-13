@@ -1,13 +1,18 @@
 package pl.polsl.timetable.course
 
+import pl.polsl.timetable.course.category.JpaCategory
+import pl.polsl.timetable.course.lecturer.JpaLecturer
+import pl.polsl.timetable.course.name.JpaCourseName
+import pl.polsl.timetable.course.room.JpaClassroom
 import java.sql.Timestamp
 import java.time.Duration
 import java.time.Instant
 import javax.persistence.*
 
 @Entity(name = "course")
-class JpaCourse(
+data class JpaCourse(
         @ManyToOne
+        @JoinColumn
         override val name: JpaCourseName,
 
         @Enumerated(EnumType.STRING)
@@ -21,7 +26,11 @@ class JpaCourse(
         override val classrooms: Set<JpaClassroom>,
 
         @ManyToMany
-        override val lecturers: Set<JpaLecturer>
+        override val lecturers: Set<JpaLecturer>,
+
+        @ManyToOne
+        @JoinColumn
+        val category: JpaCategory
 ): Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,14 +51,23 @@ class JpaCourse(
 
 
     companion object {
-        fun create(name: JpaCourseName, courseType: CourseType, beginTime: Instant, duration: Duration, classrooms: Set<JpaClassroom>, lecturers: Set<JpaLecturer>): JpaCourse {
+        fun create(
+                name: JpaCourseName,
+                courseType: CourseType,
+                beginTime: Instant,
+                duration: Duration,
+                classrooms: Set<JpaClassroom>,
+                lecturers: Set<JpaLecturer>,
+                category: JpaCategory
+        ): JpaCourse {
             return JpaCourse(
                     name,
                     courseType,
                     Timestamp.from(beginTime),
                     duration.toMillis(),
                     classrooms,
-                    lecturers
+                    lecturers,
+                    category
             )
         }
     }

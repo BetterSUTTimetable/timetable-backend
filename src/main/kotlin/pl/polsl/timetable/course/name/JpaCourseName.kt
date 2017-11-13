@@ -1,11 +1,14 @@
-package pl.polsl.timetable.course
+package pl.polsl.timetable.course.name
 
+import pl.polsl.timetable.course.name.CourseName
 import javax.persistence.*
 
-@Entity(name = "classroom")
-class JpaClassroom(
-        override val room: String
-) : Classroom {
+@Entity(name = "course_name")
+class JpaCourseName(
+        override val fullName: String,
+
+        override val shortName: String
+) : CourseName {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, name = "id")
@@ -14,4 +17,5 @@ class JpaClassroom(
     val id: Long
         @Transient
         get() = _id
+
 }
