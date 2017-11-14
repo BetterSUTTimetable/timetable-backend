@@ -1,6 +1,7 @@
 package pl.polsl.timetable.synchronization.parser;
 
 import org.jetbrains.annotations.NotNull;
+import org.springframework.stereotype.Component;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -8,6 +9,7 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+@Component
 public class DefaultIcsFileParser implements IcsFileParser {
 
     @NotNull

@@ -5,6 +5,7 @@ import org.junit.Assert
 import org.junit.Test
 import org.mockito.Mockito
 import pl.polsl.timetable.course.lecturer.DefaultLecturer
+import java.io.BufferedReader
 import java.io.File
 import java.net.URL
 
@@ -71,9 +72,9 @@ class ParsedTimetablePageTest {
         val file = timetable.icsFile
     }
 
-    private fun createIcsFile(url: String): IcsFile {
+    private fun createIcsFile(url: String): BufferedReader {
         Assert.assertEquals("https://plan.polsl.pl/plan.php?type=0&id=652&cvsfile=true&wd=1", url)
-        return Mockito.mock(IcsFile::class.java)
+        return Mockito.mock(BufferedReader::class.java)
     }
 
     private fun createLecturer(name: String, url: URL) = DefaultLecturer(name, name)

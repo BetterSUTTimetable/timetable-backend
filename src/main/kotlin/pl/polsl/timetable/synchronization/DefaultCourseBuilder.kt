@@ -1,5 +1,7 @@
 package pl.polsl.timetable.synchronization
 
+import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.stereotype.Component
 import pl.polsl.timetable.course.*
 import pl.polsl.timetable.course.lecturer.Lecturer
 import pl.polsl.timetable.course.name.DefaultCourseName
@@ -9,11 +11,13 @@ import pl.polsl.timetable.synchronization.parser.IcsFileParser
 import pl.polsl.timetable.synchronization.scraper.TimetablePage
 import java.time.Duration
 
+@Component
 class DefaultCourseBuilder(
+        @Autowired
         private val parser: IcsFileParser
 ): CoursesBuilder {
     override fun build(timetablePage: TimetablePage): List<Course> {
-        timetablePage.icsFile.content.use {
+        timetablePage.icsFile.use {
             val events = parser.parse(it)
             return events
                     .map { createCourse(timetablePage, it) }

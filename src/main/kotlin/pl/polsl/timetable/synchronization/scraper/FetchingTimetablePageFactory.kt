@@ -7,12 +7,10 @@ class FetchingTimetablePageFactory: TimetablePageFactory {
     override fun create(url: String): TimetablePage {
         return ParsedTimetablePage(
                 Jsoup.connect("http://plan.polsl.pl/$url").get(),
-                this::createIcsFile,
+                IcsFileDownloader(),
                 this::createLecturer
         )
     }
-
-    private fun createIcsFile(url: String) = FetchingIcsFile(URL(url))
 
     private fun createLecturer(shortName: String, url: URL)
             = ParsedLecturer(Jsoup.connect(url.toString()).get(), shortName)

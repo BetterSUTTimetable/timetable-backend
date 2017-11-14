@@ -5,4 +5,6 @@ import java.util.*
 
 interface CategoryRepository: JpaRepository<JpaCategory, Long> {
     fun findByParent(parent: Category?): Set<JpaCategory>
+    fun findByName(name: String): Set<JpaCategory>
+    fun findByNameAndParent(name: String, parent: Category?): Set<JpaCategory>
 }

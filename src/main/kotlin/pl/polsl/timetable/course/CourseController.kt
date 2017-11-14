@@ -9,13 +9,16 @@ import java.util.*
 import javax.websocket.server.PathParam
 
 @RestController
-class CourseController {
+class CourseController(
+        @Autowired
+        private val courseService: CourseService
+) {
     @RequestMapping(method = arrayOf(RequestMethod.GET), value = "/category/{id}/courses")
     fun courses(
             @PathVariable id: Long,
-            @RequestParam(name = "from", required = false) from: Optional<Instant>,
-            @RequestParam(name = "to", required = false) to: Optional<Instant>
+            @RequestParam(name = "from", required = true) from: Instant,
+            @RequestParam(name = "to", required = true) to: Instant
     ): List<Course> {
-        return emptyList()
+        return courseService.coursesBetween(id, from..to)
     }
 }

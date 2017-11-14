@@ -6,7 +6,7 @@ import org.junit.Test
 import org.mockito.Mockito
 import pl.polsl.timetable.course.lecturer.DefaultLecturer
 import pl.polsl.timetable.synchronization.parser.DefaultIcsFileParser
-import pl.polsl.timetable.synchronization.parser.FetchingIcsFileTest
+import pl.polsl.timetable.synchronization.parser.IcsFileDownloaderTest
 import pl.polsl.timetable.synchronization.scraper.IcsFile
 import pl.polsl.timetable.synchronization.scraper.ParsedTimetablePage
 import pl.polsl.timetable.synchronization.scraper.TimetablePage
@@ -31,11 +31,9 @@ class DefaultCourseBuilderTest {
         Assert.assertTrue(courses.isNotEmpty())
     }
 
-    private fun createIcsFile(url: String): IcsFile {
-        val file = File(FetchingIcsFileTest::class.java.getResource("test.ics").toURI())
-        val mock = Mockito.mock(IcsFile::class.java)
-        Mockito.`when`(mock.content).thenReturn(BufferedReader(FileReader(file)))
-        return mock
+    private fun createIcsFile(url: String): BufferedReader {
+        val file = File(IcsFileDownloaderTest::class.java.getResource("test.ics").toURI())
+        return BufferedReader(FileReader(file))
     }
 
     private fun createLecturer(name: String, url: URL) = DefaultLecturer(name, name)
