@@ -10,8 +10,7 @@ class DefaultCourseNameService(
     override fun findOrCreate(courseName: CourseName): JpaCourseName {
         return courseNameRepository
                 .findByFullNameAndShortName(fullName = courseName.fullName, shortName = courseName.shortName)
-                .orElse(create(courseName))
-
+                .orElseGet{ create(courseName) }
     }
 
     private fun create(courseName: CourseName): JpaCourseName {

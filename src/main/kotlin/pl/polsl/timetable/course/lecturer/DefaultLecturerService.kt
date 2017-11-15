@@ -8,10 +8,10 @@ class DefaultLecturerService(@Autowired private val lecturerRepository: Lecturer
     override fun findOrCreate(lecturer: Lecturer): JpaLecturer {
         return lecturerRepository
                 .findByFullNameAndShortName(fullName = lecturer.fullName, shortName = lecturer.shortName)
-                .orElse(create(lecturer))
+                .orElseGet{ create(lecturer) }
     }
 
     private fun create(lecturer: Lecturer): JpaLecturer {
-        return lecturerRepository.save(JpaLecturer(fullName = lecturer.fullName, shortName = lecturer.shortName))
+        return lecturerRepository.saveAndFlush(JpaLecturer(fullName = lecturer.fullName, shortName = lecturer.shortName))
     }
 }

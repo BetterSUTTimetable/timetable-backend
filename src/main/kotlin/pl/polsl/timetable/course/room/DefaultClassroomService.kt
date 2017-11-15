@@ -8,7 +8,7 @@ class DefaultClassroomService(@Autowired private val classroomRepository: Classr
     override fun findOrCreate(classroom: Classroom): JpaClassroom {
         return classroomRepository
                 .findByRoom(classroom.room)
-                .orElse(create(classroom))
+                .orElseGet{ create(classroom) }
     }
 
     private fun create(classroom: Classroom): JpaClassroom {

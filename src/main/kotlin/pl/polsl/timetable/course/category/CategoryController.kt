@@ -16,7 +16,7 @@ class CategoryController(
         return categoryService.rootCategories()
     }
 
-    @RequestMapping(method = arrayOf(RequestMethod.GET), value="/category/{id}")
+    @RequestMapping(method = arrayOf(RequestMethod.GET), value="/subcategories/{id}")
     fun category(@PathVariable id: Long): Set<IdentifiableCategory> {
         return categoryService.subcategoriesOf(id)
     }

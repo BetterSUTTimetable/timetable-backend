@@ -11,6 +11,7 @@ data class JpaCategory(
 
         @ManyToOne
         @JoinColumn
+        @JsonIgnore
         override val parent: JpaCategory?
 ) : IdentifiableCategory {
 
