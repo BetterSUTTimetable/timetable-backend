@@ -7,7 +7,6 @@ import org.mockito.Mockito
 import pl.polsl.timetable.course.lecturer.DefaultLecturer
 import pl.polsl.timetable.synchronization.parser.DefaultIcsFileParser
 import pl.polsl.timetable.synchronization.parser.IcsFileDownloaderTest
-import pl.polsl.timetable.synchronization.scraper.IcsFile
 import pl.polsl.timetable.synchronization.scraper.ParsedTimetablePage
 import pl.polsl.timetable.synchronization.scraper.TimetablePage
 import java.io.BufferedReader

@@ -12,6 +12,19 @@ class ParsedTimetablePage(
         private val icsFileFactory: (String) -> BufferedReader,
         private val lecturerFactory: (String, URL) -> Lecturer
 ): TimetablePage {
+    override val groupName: String by lazy {
+        val text = document
+                .select("div .title")
+                .map { it.text() }
+                .firstOrNull { it.startsWith("Plan zajęć") } ?: ""
+
+        Regex("Plan zajęć - (.*), semestr")
+                .find(text)
+                ?.groups
+                ?.get(1)
+                ?.value ?: ""
+    }
+
     private val allCourseLinks by lazy {
         document.select(".coursediv a")
                 .map {

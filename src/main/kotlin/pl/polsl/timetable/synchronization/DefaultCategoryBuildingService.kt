@@ -16,9 +16,6 @@ class DefaultCategoryBuildingService(
         private val categoryCreationService: CategoryCreationService,
 
         @Autowired
-        private val coursesBuilder: CoursesBuilder,
-
-        @Autowired
         private val courseRepository: CourseRepository
 ): CategoryBuildingService {
     override fun recreate(rootCategory: Category) {
@@ -29,7 +26,7 @@ class DefaultCategoryBuildingService(
         val jpaCategory = categoryCreationService.findOrCreate(parent, category.name)
 
         courseRepository.deleteByCategory(jpaCategory)
-        category.timetables.forEach { courseBuildingService.updateCourses(jpaCategory, coursesBuilder.build(it)) }
+        courseBuildingService.updateCourses(jpaCategory, category.courses)
 
         category.subcategories.forEach { recreate(it, jpaCategory) }
     }

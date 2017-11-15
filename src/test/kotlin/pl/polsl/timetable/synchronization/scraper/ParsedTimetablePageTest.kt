@@ -19,6 +19,11 @@ class ParsedTimetablePageTest {
     }
 
     @Test
+    fun groupNameTest() {
+        Assert.assertEquals("OS Inf sem2", timetable.groupName)
+    }
+
+    @Test
     fun sampleClassNamesTest() {
         val expectedNames = mapOf(
                 "*PPP" to "Praktyka Programowania - Python",
