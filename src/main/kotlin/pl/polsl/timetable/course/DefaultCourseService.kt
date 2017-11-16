@@ -17,7 +17,7 @@ class DefaultCourseService(
 ): CourseService {
     override fun coursesBetween(categoryId: Long, timeRange: ClosedRange<Instant>): List<JpaCourse> {
         val category = categoryRepository.findOne(categoryId) ?: throw CategoryNotFoundException(categoryId)
-        return courseRepository.findByBeginTimestampBetweenAndCategoryOrderByBeginTimestampDesc(
+        return courseRepository.findByBeginTimestampBetweenAndCategoryOrderByBeginTimestampAsc(
                 Timestamp.from(timeRange.start),
                 Timestamp.from(timeRange.endInclusive),
                 category

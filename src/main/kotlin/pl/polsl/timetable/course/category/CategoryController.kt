@@ -16,9 +16,14 @@ class CategoryController(
         return categoryService.rootCategories()
     }
 
-    @RequestMapping(method = arrayOf(RequestMethod.GET), value="/subcategories/{id}")
-    fun category(@PathVariable id: Long): Set<IdentifiableCategory> {
+    @RequestMapping(method = arrayOf(RequestMethod.GET), value="/category/{id}/subcategories")
+    fun subcategories(@PathVariable id: Long): Set<IdentifiableCategory> {
         return categoryService.subcategoriesOf(id)
+    }
+
+    @RequestMapping(method = arrayOf(RequestMethod.GET), value="/category/{id}")
+    fun category(@PathVariable id: Long): ChildrenAwareCategory {
+        return categoryService.category(id)
     }
 }
 

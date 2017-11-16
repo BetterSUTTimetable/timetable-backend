@@ -1,5 +1,7 @@
 package pl.polsl.timetable.course
 
+import com.fasterxml.jackson.annotation.JsonFormat
+import com.fasterxml.jackson.annotation.JsonIgnore
 import pl.polsl.timetable.course.category.JpaCategory
 import pl.polsl.timetable.course.lecturer.JpaLecturer
 import pl.polsl.timetable.course.name.JpaCourseName
@@ -30,6 +32,7 @@ data class JpaCourse(
 
         @ManyToOne
         @JoinColumn
+        @JsonIgnore
         val category: JpaCategory
 ): Course {
     @Id
@@ -43,10 +46,12 @@ data class JpaCourse(
 
     override val beginTime: Instant
         @Transient
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER)
         get() = beginTimestamp.toInstant()
 
     override val duration: Duration
         @Transient
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER)
         get() = Duration.ofMillis(durationMillis)
 
 

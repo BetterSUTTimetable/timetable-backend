@@ -1,5 +1,6 @@
 package pl.polsl.timetable.synchronization
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
 import pl.polsl.timetable.course.*
@@ -16,13 +17,21 @@ class DefaultCourseBuilder(
         @Autowired
         private val parser: IcsFileParser
 ): CoursesBuilder {
+
+    private val logger = LoggerFactory.getLogger(this.javaClass)
+
     override fun build(timetablePage: TimetablePage): List<Course> {
-        timetablePage.icsFile.use {
-            val events = parser.parse(it)
-            return events
-                    .map { createCourse(timetablePage, it) }
-                    .toList()
-        }
+        logger.trace("Building courses for ${timetablePage.groupName}")
+        return timetablePage.icsFile
+                .map {
+                    it.use {
+                        val events = parser.parse(it)
+                        events
+                                .map { createCourse(timetablePage, it) }
+                                .toList()
+                    }
+                }
+                .orElse(emptyList())
     }
 
     private fun createCourse(timetablePage: TimetablePage, event: IcsEvent): Course {

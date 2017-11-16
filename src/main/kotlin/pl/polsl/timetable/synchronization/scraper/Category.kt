@@ -5,6 +5,6 @@ import pl.polsl.timetable.course.Course
 interface Category {
     val name: String
     val subcategories: List<Category>
-    val courses: List<Course>
+    fun courses(): List<Course>
 }
 

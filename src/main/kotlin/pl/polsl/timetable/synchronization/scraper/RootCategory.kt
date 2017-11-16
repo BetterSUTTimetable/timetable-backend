@@ -9,7 +9,7 @@ class RootCategory(
 ): Category {
     override val name: String = "root"
 
-    override val subcategories: List<Category> by lazy {
+    override val subcategories: List<Category> = {
         val tree = document.select(".main_tree").first()
         val elements = tree.select("span")
 
@@ -17,7 +17,7 @@ class RootCategory(
             val id = it.parent().id().toLong()
             innerCategoryFactory(id)
         }.toList()
-    }
+    }()
 
-    override val courses: List<Course> = emptyList()
+    override fun courses(): List<Course> = emptyList()
 }

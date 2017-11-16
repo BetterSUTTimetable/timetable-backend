@@ -24,7 +24,8 @@ class DefaultCategoryScraper(
 
     override fun scrape(): Category {
         val document = Jsoup.connect(url.toString()).get()
-        return RootCategory(document, this::createInnerCategory)
+        return createInnerCategory(189357)
+        //return RootCategory(document, this::createInnerCategory)
     }
 
     private fun createInnerCategory(id: Long): Category {

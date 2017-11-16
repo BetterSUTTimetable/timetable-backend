@@ -6,13 +6,14 @@ import pl.polsl.timetable.course.room.Classroom
 import pl.polsl.timetable.course.room.DefaultClassroom
 import java.io.BufferedReader
 import java.net.URL
+import java.util.*
 
 class ParsedTimetablePage(
         private val document: Document,
         private val icsFileFactory: (String) -> BufferedReader,
         private val lecturerFactory: (String, URL) -> Lecturer
 ): TimetablePage {
-    override val groupName: String by lazy {
+    override val groupName: String = {
         val text = document
                 .select("div .title")
                 .map { it.text() }
@@ -22,58 +23,64 @@ class ParsedTimetablePage(
                 .find(text)
                 ?.groups
                 ?.get(1)
-                ?.value ?: ""
-    }
+                ?.value
+                ?.trim() ?: ""
+    }()
 
-    private val allCourseLinks by lazy {
+    private val allCourseLinks = {
         document.select(".coursediv a")
                 .map {
                     it.absUrl("href") to it
                 }
                 .filter { (first, _) -> first != null }
-    }
+    }()
 
-    override val classNames: Map<String, String> by lazy {
+    override val classNames: Map<String, String> = {
         val legend = document.select(".data").first()
         val shortNames = legend.select("strong")
 
         shortNames
                 .map {
-                    val shortName = it.text()
+                    val shortName = it.text().trim()
                     val longName = it.nextSibling().toString().trim(' ', '-', '\t')
                     shortName to longName
                 }
                 .toMap()
-    }
+    }()
 
-    override val lecturers: Set<Lecturer> by lazy {
+    override val lecturers: Set<Lecturer> by lazy{
         allCourseLinks
                 .filter { (url, _) ->
                     url.contains("type=10")
                 }
                 .map{ (url, element) ->
-                    lecturerFactory(element.text(), URL(url))
+                    lecturerFactory(element.text().trim(), URL(url))
                 }
                 .toSet()
     }
 
-    override val classrooms: Set<Classroom> by lazy {
+    override val classrooms: Set<Classroom> = {
         allCourseLinks
                 .filter { (url, _) ->
                     url.contains("type=20")
                 }
                 .map{ (_, second) ->
-                    DefaultClassroom(second.text())
+                    DefaultClassroom(second.text().trim())
                 }
                 .toSet()
-    }
+    }()
 
-    override val icsFile: BufferedReader by lazy {
+    override val icsFile: Optional<BufferedReader> by lazy {
+        //TODO: fix this horror
         val link = document
                 .select(".data a")
-                .first { it.text() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google"}
-                .absUrl("href")
+                .firstOrNull { it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google"}
+                ?.absUrl("href")
 
-        icsFileFactory(link)
+        if (link != null) {
+            Optional.of(icsFileFactory(link))
+        } else {
+            Optional.empty()
+        }
     }
 }

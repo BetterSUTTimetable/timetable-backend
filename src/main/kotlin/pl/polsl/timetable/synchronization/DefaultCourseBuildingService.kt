@@ -1,5 +1,6 @@
 package pl.polsl.timetable.synchronization
 
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pl.polsl.timetable.course.*
@@ -23,7 +24,10 @@ class DefaultCourseBuildingService(
         private val courseNameService: CourseNameService
 ): CourseBuildingService {
 
+    private val logger = LoggerFactory.getLogger(this.javaClass)
+
     override fun updateCourses(category: JpaCategory, courses: List<Course>) {
+        logger.trace("Updating courses database for category $category")
         for (course in courses) {
             with (course) {
                 val jpaLecturers = lecturers.map { lecturerService.findOrCreate(it) }.toSet()

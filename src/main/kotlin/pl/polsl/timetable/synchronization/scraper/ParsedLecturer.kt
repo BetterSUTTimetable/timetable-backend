@@ -4,8 +4,8 @@ import org.jsoup.nodes.Document
 import pl.polsl.timetable.course.lecturer.Lecturer
 import java.util.*
 
-class ParsedLecturer(private val document: Document, override val shortName: String): Lecturer {
-    override val fullName by lazy {
+class ParsedLecturer(document: Document, override val shortName: String): Lecturer {
+    override val fullName = {
         val nameText = document
                 .select("div .title")
                 .filter {
@@ -17,8 +17,9 @@ class ParsedLecturer(private val document: Document, override val shortName: Str
                 .find(nameText)
                 ?.groups
                 ?.get(1)
-                ?.value ?: shortName
-    }
+                ?.value
+                ?.trim() ?: shortName
+    }()
 
     override fun equals(other: Any?): Boolean
             = other is ParsedLecturer && other.shortName == shortName && other.fullName == fullName

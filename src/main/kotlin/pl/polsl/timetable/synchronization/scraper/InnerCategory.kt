@@ -11,9 +11,9 @@ class InnerCategory(
 ): Category {
     override val name = document.select("span").firstOrNull()?.text() ?: ""
 
-    override val courses: List<Course> = emptyList()
+    override fun courses(): List<Course> = emptyList()
 
-    override val subcategories: List<Category> by lazy {
+    override val subcategories: List<Category> = {
         val listElements = document.select("li").map {
             it to it.select("div")
         }
@@ -40,5 +40,5 @@ class InnerCategory(
                 .toList()
 
         innerCategories + leafCategories
-    }
+    }()
 }
