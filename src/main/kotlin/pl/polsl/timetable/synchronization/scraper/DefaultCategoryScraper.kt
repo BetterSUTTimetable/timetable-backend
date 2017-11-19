@@ -23,9 +23,19 @@ class DefaultCategoryScraper(
     private val url = URL(url)
 
     override fun scrape(): Category {
-        val document = Jsoup.connect(url.toString()).get()
-        return createInnerCategory(189357)
-        //return RootCategory(document, this::createInnerCategory)
+        val categoryId = Regex("branch=(\\d*)")
+                .find(url.toString())
+                ?.groups
+                ?.get(1)
+                ?.value
+                ?.toLongOrNull()
+
+        if (categoryId != null) {
+            return createInnerCategory(categoryId)
+        } else {
+            val document = Jsoup.connect(url.toString()).get()
+            return RootCategory(document, this::createInnerCategory)
+        }
     }
 
     private fun createInnerCategory(id: Long): Category {
