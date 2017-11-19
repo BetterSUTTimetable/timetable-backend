@@ -30,6 +30,8 @@ class SecurityConfiguration(
     override fun configure(http: HttpSecurity) {
         http
                 .formLogin()
+                .usernameParameter("email")
+                .passwordParameter("password")
                 .loginPage("/login")
                 .and()
                 .addFilter(CustomUsernamePasswordAuthenticationFilter(authenticationManager(), RestAuthenticationSuccessHandler()))

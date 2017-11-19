@@ -46,12 +46,10 @@ data class JpaCourse(
 
     override val beginTime: Instant
         @Transient
-        @JsonFormat(shape = JsonFormat.Shape.NUMBER)
         get() = beginTimestamp.toInstant()
 
     override val duration: Duration
         @Transient
-        @JsonFormat(shape = JsonFormat.Shape.NUMBER)
         get() = Duration.ofMillis(durationMillis)
 
 
