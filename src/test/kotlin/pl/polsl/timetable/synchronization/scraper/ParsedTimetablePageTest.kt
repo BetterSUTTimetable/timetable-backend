@@ -1,5 +1,6 @@
 package pl.polsl.timetable.synchronization.scraper
 
+import com.github.michaelbull.result.Result
 import org.jsoup.Jsoup
 import org.junit.Assert
 import org.junit.Test
@@ -82,5 +83,5 @@ class ParsedTimetablePageTest {
         return Mockito.mock(BufferedReader::class.java)
     }
 
-    private fun createLecturer(name: String, url: URL) = DefaultLecturer(name, name)
+    private fun createLecturer(name: String, url: URL) = Result.of{ DefaultLecturer(name, name) }
 }

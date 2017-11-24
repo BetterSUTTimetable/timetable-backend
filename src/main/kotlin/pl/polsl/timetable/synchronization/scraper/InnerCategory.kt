@@ -1,13 +1,15 @@
 package pl.polsl.timetable.synchronization.scraper
 
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.getAll
 import org.jsoup.nodes.Document
 import pl.polsl.timetable.course.Course
 import java.net.URL
 
 class InnerCategory(
         private val document: Document,
-        private val innerCategoryFactory: (Long) -> Category,
-        private val leafCategoryFactory: (URL) -> Category
+        private val innerCategoryFactory: (Long) -> Result<Category, Throwable>,
+        private val leafCategoryFactory: (URL) -> Result<Category, Throwable>
 ): Category {
     override val name = document.select("span").firstOrNull()?.text() ?: ""
 
@@ -28,6 +30,7 @@ class InnerCategory(
                     innerCategoryFactory(id)
                 }
                 .toList()
+                .getAll()
 
         val leafCategories = listElements
                 .filter {
@@ -38,6 +41,7 @@ class InnerCategory(
                 .map { URL(it.absUrl("href"))}
                 .map(leafCategoryFactory)
                 .toList()
+                .getAll()
 
         innerCategories + leafCategories
     }()

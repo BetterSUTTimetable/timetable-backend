@@ -1,5 +1,8 @@
 package pl.polsl.timetable.synchronization.scraper
 
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.getAll
+import com.github.michaelbull.result.map
 import org.jsoup.nodes.Document
 import pl.polsl.timetable.course.lecturer.Lecturer
 import pl.polsl.timetable.course.room.Classroom
@@ -10,21 +13,23 @@ import java.util.*
 
 class ParsedTimetablePage(
         private val document: Document,
-        private val icsFileFactory: (String) -> BufferedReader,
-        private val lecturerFactory: (String, URL) -> Lecturer
+        icsFileFactory: (String) -> BufferedReader,
+        private val lecturerFactory: (String, URL) -> Result<Lecturer, Throwable>
 ): TimetablePage {
     override val groupName: String = {
         val text = document
                 .select("div .title")
                 .map { it.text() }
-                .firstOrNull { it.startsWith("Plan zajęć") } ?: ""
+                .firstOrNull { it.startsWith("Plan zajęć") }
+                ?: throw RuntimeException("Cannot find group name in timetable!")
 
         Regex("Plan zajęć - (.*), semestr")
                 .find(text)
                 ?.groups
                 ?.get(1)
                 ?.value
-                ?.trim() ?: ""
+                ?.trim()
+                ?: throw RuntimeException("Cannot find group name in timetable!")
     }()
 
     private val allCourseLinks = {
@@ -36,7 +41,8 @@ class ParsedTimetablePage(
     }()
 
     override val classNames: Map<String, String> = {
-        val legend = document.select(".data").first()
+        val legend = document.select(".data").firstOrNull()
+                ?: throw RuntimeException("Timetable for $groupName doesn't contain class names!")
         val shortNames = legend.select("strong")
 
         shortNames
@@ -48,7 +54,7 @@ class ParsedTimetablePage(
                 .toMap()
     }()
 
-    override val lecturers: Set<Lecturer> by lazy{
+    override val lecturers: Set<Lecturer> by lazy {
         allCourseLinks
                 .filter { (url, _) ->
                     url.contains("type=10")
@@ -56,10 +62,11 @@ class ParsedTimetablePage(
                 .map{ (url, element) ->
                     lecturerFactory(element.text().trim(), URL(url))
                 }
+                .getAll()
                 .toSet()
     }
 
-    override val classrooms: Set<Classroom> = {
+    override val classrooms: Set<Classroom> =
         allCourseLinks
                 .filter { (url, _) ->
                     url.contains("type=20")
@@ -68,19 +75,12 @@ class ParsedTimetablePage(
                     DefaultClassroom(second.text().trim())
                 }
                 .toSet()
-    }()
 
-    override val icsFile: Optional<BufferedReader> by lazy {
-        //TODO: fix this horror
-        val link = document
+    override val icsFile: BufferedReader =
+        icsFileFactory(
+                document
                 .select(".data a")
-                .firstOrNull { it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google"}
-                ?.absUrl("href")
-
-        if (link != null) {
-            Optional.of(icsFileFactory(link))
-        } else {
-            Optional.empty()
-        }
-    }
+                .firstOrNull { it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google" }
+                ?.absUrl("href") ?: throw RuntimeException("`$groupName` timetable doesn't contain ICS link!")
+        )
 }

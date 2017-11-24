@@ -10,5 +10,5 @@ interface TimetablePage {
     val classNames: Map<String, String>
     val lecturers: Set<Lecturer>
     val classrooms: Set<Classroom>
-    val icsFile: Optional<BufferedReader>
+    val icsFile: BufferedReader
 }
