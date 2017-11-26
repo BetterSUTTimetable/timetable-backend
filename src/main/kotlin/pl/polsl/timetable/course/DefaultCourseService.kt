@@ -4,6 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pl.polsl.timetable.course.category.CategoryNotFoundException
 import pl.polsl.timetable.course.category.CategoryRepository
+import pl.polsl.timetable.user.JpaUser
+import pl.polsl.timetable.user.User
 import java.sql.Timestamp
 import java.time.Instant
 
@@ -22,5 +24,11 @@ class DefaultCourseService(
                 Timestamp.from(timeRange.endInclusive),
                 category
         )
+    }
+
+    override fun userCoursesBetween(user: User, timeRange: ClosedRange<Instant>): List<JpaCourse> {
+        val courses = user.selectedCategories.flatMap { coursesBetween(it.id, timeRange) }
+        //TODO: filter as well
+        return courses
     }
 }

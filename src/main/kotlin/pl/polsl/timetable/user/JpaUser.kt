@@ -1,6 +1,7 @@
 package pl.polsl.timetable.user
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import pl.polsl.timetable.course.category.IdentifiableCategory
 import javax.persistence.*
 
 @Entity(name = "user")
@@ -9,7 +10,13 @@ class JpaUser(
         override val email: String,
 
         @JsonIgnore
-        override val passwordHash: String
+        override val passwordHash: String,
+
+        @ManyToMany
+        override val selectedCategories: MutableSet<IdentifiableCategory> = mutableSetOf(),
+
+        @ManyToMany
+        override val favoriteCategories: MutableSet<IdentifiableCategory> = mutableSetOf()
 ) : User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
