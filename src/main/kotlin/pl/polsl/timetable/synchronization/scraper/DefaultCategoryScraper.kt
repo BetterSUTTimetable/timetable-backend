@@ -1,5 +1,6 @@
 package pl.polsl.timetable.synchronization.scraper
 
+import com.github.michaelbull.result.*
 import org.jsoup.Jsoup
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -22,7 +23,7 @@ class DefaultCategoryScraper(
     private val logger = LoggerFactory.getLogger(this.javaClass)
     private val url = URL(url)
 
-    override fun scrape(): Category {
+    override fun scrape(): Result<Category, Throwable> {
         val categoryId = Regex("branch=(\\d*)")
                 .find(url.toString())
                 ?.groups
@@ -30,26 +31,42 @@ class DefaultCategoryScraper(
                 ?.value
                 ?.toLongOrNull()
 
-        if (categoryId != null) {
-            return createInnerCategory(categoryId)
+        return if (categoryId != null) {
+            createInnerCategory(categoryId)
         } else {
-            val document = Jsoup.connect(url.toString()).get()
-            return RootCategory(document, this::createInnerCategory)
+            Result.of {
+                RootCategory(Jsoup.connect(url.toString()).get(), this::createInnerCategory)
+            }
         }
     }
 
-    private fun createInnerCategory(id: Long): Category {
-        //TODO: remove this logic from here?
-        val url = "https://plan.polsl.pl/left_menu_feed.php?type=1&branch=$id&link=0"
+    private fun createInnerCategory(id: Long): Result<Category, Throwable> {
         logger.info("Scraping category: $url")
-        val document = Jsoup.connect(url).get()
-        return InnerCategory(document, this::createInnerCategory, this::createLeafCategory)
+
+        val category = Result.of {
+            val url = "https://plan.polsl.pl/left_menu_feed.php?type=1&branch=$id&link=0"
+            val document = Jsoup.connect(url).get()
+            InnerCategory(document, this::createInnerCategory, this::createLeafCategory)
+        }
+
+        category.onFailure { logger.error("Cannot create inner category $url", it) }
+
+        return category
     }
 
-    private fun createLeafCategory(leafUrl: URL): Category {
+    private fun createLeafCategory(leafUrl: URL): Result<Category, Throwable> {
         //TODO: change this sick logic please...
-        val timetableUrl = URL(leafUrl.toString() + "&winW=1584&winH=818&loadBG=000000")
-        logger.info("Scraping timetable: $timetableUrl")
-        return LeafCategory(timetablePageFactory.create(timetableUrl), coursesBuilder)
+        logger.info("Scraping timetable: $leafUrl")
+
+        val category = Result.of {
+            URL(leafUrl.toString() + "&winW=1584&winH=818&loadBG=000000")
+        }
+                .andThen { timetablePageFactory.create(it) }
+                .map { LeafCategory(it, coursesBuilder) }
+
+
+        category.onFailure { logger.warn("Cannot create leaf category $url . $it") }
+
+        return category
     }
 }

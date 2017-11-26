@@ -1,5 +1,6 @@
 package pl.polsl.timetable.synchronization
 
+import com.github.michaelbull.result.mapBoth
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.scheduling.annotation.Scheduled
@@ -20,8 +21,15 @@ class DefaultSynchronizationService(
     @Scheduled(fixedRate = 24*60*60*1000, initialDelay = 0)
     override fun synchronize() {
         logger.info("Starting synchronization procedure...")
-        val root = categoryScraper.scrape()
-        categoryBuildingService.recreate(root)
-        logger.info("Synchronization finished!")
+
+        categoryScraper.scrape().mapBoth(
+                {
+                    categoryBuildingService.recreate(it)
+                    logger.info("Synchronization finished!")
+                },
+                {
+                    logger.error("Cannot synchronize!", it)
+                }
+        )
     }
 }
