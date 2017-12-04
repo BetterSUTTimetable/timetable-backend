@@ -1,7 +1,7 @@
 package pl.polsl.timetable.user
 
 import pl.polsl.timetable.course.category.IdentifiableCategory
-import pl.polsl.timetable.filter.CourseFilterData
+import pl.polsl.timetable.course.filter.CourseFilterData
 
 interface User {
     val email: String

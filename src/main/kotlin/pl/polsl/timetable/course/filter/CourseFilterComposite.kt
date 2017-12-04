@@ -1,4 +1,4 @@
-package pl.polsl.timetable.filter
+package pl.polsl.timetable.course.filter
 
 import pl.polsl.timetable.course.Course
 

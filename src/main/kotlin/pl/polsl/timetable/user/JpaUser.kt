@@ -3,8 +3,8 @@ package pl.polsl.timetable.user
 import com.fasterxml.jackson.annotation.JsonIgnore
 import pl.polsl.timetable.course.category.IdentifiableCategory
 import pl.polsl.timetable.course.category.JpaCategory
-import pl.polsl.timetable.filter.CourseFilterData
-import pl.polsl.timetable.filter.JpaCourseFilterData
+import pl.polsl.timetable.course.filter.CourseFilterData
+import pl.polsl.timetable.course.filter.JpaCourseFilterData
 import javax.persistence.*
 
 @Entity(name = "user")
@@ -33,7 +33,10 @@ class JpaUser(
         @Transient
         get() = _id
 
-    override val filters by lazy<Map<IdentifiableCategory, List<CourseFilterData>>> {
+
+    @get:Transient
+    @delegate:Transient
+    override val filters: Map<IdentifiableCategory, List<CourseFilterData>> by lazy<Map<IdentifiableCategory, List<CourseFilterData>>> {
         jpaFilters.groupBy { it.category }
     }
 

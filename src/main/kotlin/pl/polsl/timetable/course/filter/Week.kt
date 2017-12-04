@@ -1,10 +1,9 @@
-package pl.polsl.timetable.filter
+package pl.polsl.timetable.course.filter
 
 import java.time.Instant
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import java.time.temporal.IsoFields.WEEK_OF_WEEK_BASED_YEAR
-import java.time.temporal.WeekFields
 
 enum class Week: (Instant) -> Boolean {
     EvenWeek {

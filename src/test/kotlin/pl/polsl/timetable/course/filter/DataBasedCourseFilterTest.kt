@@ -1,11 +1,10 @@
-package pl.polsl.timetable.filter
+package pl.polsl.timetable.course.filter
 
 import org.junit.Assert
 import org.junit.Test
 import pl.polsl.timetable.course.Course
 import pl.polsl.timetable.course.CourseType
 import pl.polsl.timetable.course.DefaultCourse
-import pl.polsl.timetable.course.name.CourseName
 import pl.polsl.timetable.course.name.DefaultCourseName
 import java.time.Duration
 import java.time.Instant

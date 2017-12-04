@@ -4,9 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
 import pl.polsl.timetable.course.category.CategoryNotFoundException
 import pl.polsl.timetable.course.category.CategoryRepository
-import pl.polsl.timetable.filter.CourseFilterComposite
-import pl.polsl.timetable.filter.DataBasedCourseFilter
-import pl.polsl.timetable.user.JpaUser
+import pl.polsl.timetable.course.filter.CourseFilterComposite
+import pl.polsl.timetable.course.filter.DataBasedCourseFilter
 import pl.polsl.timetable.user.User
 import java.sql.Timestamp
 import java.time.Instant

@@ -1,7 +1,6 @@
-package pl.polsl.timetable.filter
+package pl.polsl.timetable.course.filter
 
 import pl.polsl.timetable.course.CourseType
-import pl.polsl.timetable.course.category.IdentifiableCategory
 import pl.polsl.timetable.course.category.JpaCategory
 import java.time.Duration
 import java.time.LocalTime
