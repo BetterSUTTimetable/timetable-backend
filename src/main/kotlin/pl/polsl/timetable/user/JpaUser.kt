@@ -3,6 +3,8 @@ package pl.polsl.timetable.user
 import com.fasterxml.jackson.annotation.JsonIgnore
 import pl.polsl.timetable.course.category.IdentifiableCategory
 import pl.polsl.timetable.course.category.JpaCategory
+import pl.polsl.timetable.filter.CourseFilterData
+import pl.polsl.timetable.filter.JpaCourseFilterData
 import javax.persistence.*
 
 @Entity(name = "user")
@@ -17,7 +19,10 @@ class JpaUser(
         override val selectedCategories: MutableSet<JpaCategory> = mutableSetOf(),
 
         @ManyToMany
-        override val favoriteCategories: MutableSet<JpaCategory> = mutableSetOf()
+        override val favoriteCategories: MutableSet<JpaCategory> = mutableSetOf(),
+
+        @OneToMany
+        val jpaFilters: List<JpaCourseFilterData> = mutableListOf()
 ) : User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -27,4 +32,9 @@ class JpaUser(
     val id: Long
         @Transient
         get() = _id
+
+    override val filters by lazy<Map<IdentifiableCategory, List<CourseFilterData>>> {
+        jpaFilters.groupBy { it.category }
+    }
+
 }
