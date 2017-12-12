@@ -12,10 +12,7 @@ import java.time.Instant
 
 @Service
 class DefaultCourseService(
-        @Autowired
         private val courseRepository: CourseRepository,
-
-        @Autowired
         private val categoryRepository: CategoryRepository
 ): CourseService {
     override fun coursesBetween(categoryId: Long, timeRange: ClosedRange<Instant>): List<JpaCourse> {

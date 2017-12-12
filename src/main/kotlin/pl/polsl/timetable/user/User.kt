@@ -4,6 +4,7 @@ import pl.polsl.timetable.course.category.IdentifiableCategory
 import pl.polsl.timetable.course.filter.CourseFilterData
 
 interface User {
+    val id: Long
     val email: String
     val passwordHash: String
     val selectedCategories: Set<IdentifiableCategory>

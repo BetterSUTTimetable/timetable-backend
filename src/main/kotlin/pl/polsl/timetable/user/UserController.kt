@@ -17,7 +17,7 @@ class UserController(
 
         private val coursesService: CourseService
 ) {
-    @RequestMapping(method = arrayOf(RequestMethod.POST, RequestMethod.PUT), value="/users")
+    @RequestMapping(method = arrayOf(RequestMethod.POST, RequestMethod.PUT), value= ["/users"])
     @ApiOperation(
             value = "Register a new user."
     )
@@ -26,13 +26,13 @@ class UserController(
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = arrayOf(RequestMethod.GET), value="/user/me")
+    @RequestMapping(method = arrayOf(RequestMethod.GET), value= ["/user/me"])
     fun currentUser(principal: Principal?): User {
         return userService.find(principal!!)
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = arrayOf(RequestMethod.GET), value="/user/me/courses")
+    @RequestMapping(method = arrayOf(RequestMethod.GET), value= ["/user/me/courses"])
     fun currentUserCourses(
             principal: Principal?,
 
@@ -57,7 +57,7 @@ class UserController(
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = arrayOf(RequestMethod.GET), value="/user/me/favorite_categories")
+    @RequestMapping(method = [RequestMethod.GET], value= ["/user/me/favorite_categories"])
     fun currentUserFavoriteCategories(principal: Principal?): Set<IdentifiableCategory> {
         val currentUser = userService.find(principal!!)
         return currentUser.favoriteCategories

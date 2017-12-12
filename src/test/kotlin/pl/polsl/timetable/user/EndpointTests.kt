@@ -46,15 +46,15 @@ class EndpointTests {
     @Test
     fun basicResourceAccessWithRegistrationScenario() {
         mock
-                .perform(get("/users/me"))
+                .perform(get("/users/me").header("Origin", "cos"))
                 .andExpect(status().isUnauthorized)
 
         mock
-                .perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"test@email.com","password":"admin1"}"""))
+                .perform(post("/users").header("Origin", "cos").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"test@email.com","password":"admin1"}"""))
                 .andExpect(status().is2xxSuccessful)
 
         val session = mock
-                .perform(post("/login").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"test@email.com","password":"admin1"}"""))
+                .perform(post("/login").header("Origin", "cos").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"test@email.com","password":"admin1"}"""))
                 .andExpect(status().is2xxSuccessful)
                 .andReturn()
                 .request
@@ -64,7 +64,7 @@ class EndpointTests {
         Assert.assertNotNull(session as? MockHttpSession )
 
         val text = mock
-                .perform(get("/users/me").session(session as MockHttpSession))
+                .perform(get("/users/me").header("Origin", "cos").session(session as MockHttpSession))
                 .andExpect(status().is2xxSuccessful)
                 .andExpect(jsonPath("$.email").value("test@email.com"))
                 .andExpect(jsonPath("$.passwordHash").doesNotExist())
@@ -73,7 +73,7 @@ class EndpointTests {
     @Test
     fun emailValidation() {
         mock
-                .perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"invalid_email","password":"admin1"}"""))
+                .perform(post("/users").header("Origin", "cos").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"invalid_email","password":"admin1"}"""))
                 .andExpect(status().is4xxClientError)
     }
 

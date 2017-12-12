@@ -22,17 +22,16 @@ class JpaUser(
         override val favoriteCategories: MutableSet<JpaCategory> = mutableSetOf(),
 
         @OneToMany
-        val jpaFilters: List<JpaCourseFilterData> = mutableListOf()
+        val jpaFilters: MutableList<JpaCourseFilterData> = mutableListOf()
 ) : User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, name = "id")
     private var _id: Long = 0L
 
-    val id: Long
+    override val id: Long
         @Transient
         get() = _id
-
 
     @get:Transient
     @delegate:Transient
