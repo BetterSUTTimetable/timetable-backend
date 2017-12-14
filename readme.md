@@ -1,5 +1,7 @@
 SUT Timetable Backend
 ===
+[![Build Status](https://travis-ci.org/BetterSUTTimetable/timetable-backend.svg?branch=develop)](https://travis-ci.org/BetterSUTTimetable/timetable-backend)
+===
 Backend for Silesian University Of Technology's timetable. 
 
 Dependencies
