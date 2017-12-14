@@ -44,17 +44,32 @@ class EndpointTests {
     }
 
     @Test
-    fun basicResourceAccessWithRegistrationScenario() {
+    fun `accessing "users me" endpoint should return unauthorized status for unauthorized user`() {
         mock
-                .perform(get("/users/me"))
+                .perform(get("/users/me").header("origin",""))
                 .andExpect(status().isUnauthorized)
+    }
+
+    @Test
+    fun `registering and logging in should succeed`() {
+
 
         mock
-                .perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"test@email.com","password":"admin1"}"""))
+                .perform(
+                        post("/users")
+                                .header("origin","")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("""{"email":"test@email.com","password":"admin1"}""")
+                )
                 .andExpect(status().is2xxSuccessful)
 
         val session = mock
-                .perform(post("/login").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"test@email.com","password":"admin1"}"""))
+                .perform(
+                        post("/login")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("""{"email":"test@email.com","password":"admin1"}""")
+                                .header("origin","")
+                )
                 .andExpect(status().is2xxSuccessful)
                 .andReturn()
                 .request
@@ -63,17 +78,26 @@ class EndpointTests {
         Assert.assertNotNull(session)
         Assert.assertNotNull(session as? MockHttpSession )
 
-        val text = mock
-                .perform(get("/users/me").session(session as MockHttpSession))
-                .andExpect(status().is2xxSuccessful)
-                .andExpect(jsonPath("$.email").value("test@email.com"))
-                .andExpect(jsonPath("$.passwordHash").doesNotExist())
+        mock
+            .perform(
+                    get("/users/me")
+                            .header("origin","")
+                            .session(session as MockHttpSession)
+            )
+            .andExpect(status().is2xxSuccessful)
+            .andExpect(jsonPath("$.email").value("test@email.com"))
+            .andExpect(jsonPath("$.passwordHash").doesNotExist())
     }
 
     @Test
-    fun emailValidation() {
+    fun `posting user with invalid email should return 4xx status`() {
         mock
-                .perform(post("/users").contentType(MediaType.APPLICATION_JSON_UTF8).content("""{"email":"invalid_email","password":"admin1"}"""))
+                .perform(
+                        post("/users")
+                                .contentType(MediaType.APPLICATION_JSON_UTF8)
+                                .content("""{"email":"invalid_email","password":"admin1"}""")
+                                .header("origin","")
+                )
                 .andExpect(status().is4xxClientError)
     }
 

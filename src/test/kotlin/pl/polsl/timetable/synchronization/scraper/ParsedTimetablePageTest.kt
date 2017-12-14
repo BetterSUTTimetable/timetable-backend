@@ -13,10 +13,11 @@ import java.net.URL
 class ParsedTimetablePageTest {
     private val page = File(ParsedTimetablePageTest::class.java.getResource("timetable_page.html").toURI())
     private val document = Jsoup.parse(page, "iso-8859-2")
-    private val timetable: TimetablePage = ParsedTimetablePage(document, this::createIcsFile, this::createLecturer)
+    private val timetable: TimetablePage
 
     init{
         document.setBaseUri("https://plan.polsl.pl")
+        timetable = ParsedTimetablePage(document, this::createIcsFile, this::createLecturer)
     }
 
     @Test
