@@ -1,11 +1,14 @@
 package pl.polsl.timetable.synchronization.scraper
 
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.getAll
+import com.github.michaelbull.result.partition
 import org.jsoup.nodes.Document
 import pl.polsl.timetable.course.Course
 
 class RootCategory(
         private val document: Document,
-        private val innerCategoryFactory: (Long) -> Category
+        private val innerCategoryFactory: (Long) -> Result<Category, Throwable>
 ): Category {
     override val name: String = "root"
 
@@ -16,7 +19,9 @@ class RootCategory(
         elements.map {
             val id = it.parent().id().toLong()
             innerCategoryFactory(id)
-        }.toList()
+        }
+                .toList()
+                .getAll()
     }()
 
     override fun courses(): List<Course> = emptyList()

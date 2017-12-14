@@ -9,7 +9,9 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter
 import org.springframework.security.core.userdetails.UserDetailsService
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.security.web.access.channel.ChannelProcessingFilter
 import org.springframework.security.web.authentication.HttpStatusEntryPoint
+import pl.polsl.timetable.config.CORSFilter
 
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled=true)
@@ -29,6 +31,7 @@ class SecurityConfiguration(
 
     override fun configure(http: HttpSecurity) {
         http
+                .addFilterBefore(CORSFilter(), ChannelProcessingFilter::class.java)
                 .formLogin()
                 .usernameParameter("email")
                 .passwordParameter("password")

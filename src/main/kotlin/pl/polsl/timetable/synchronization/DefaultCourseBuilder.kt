@@ -1,5 +1,7 @@
 package pl.polsl.timetable.synchronization
 
+import com.github.michaelbull.result.Result
+import com.github.michaelbull.result.mapBoth
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -22,16 +24,22 @@ class DefaultCourseBuilder(
 
     override fun build(timetablePage: TimetablePage): List<Course> {
         logger.trace("Building courses for ${timetablePage.groupName}")
-        return timetablePage.icsFile
-                .map {
-                    it.use {
+        return Result
+                .of {
+                    timetablePage.icsFile.use {
                         val events = parser.parse(it)
                         events
                                 .map { createCourse(timetablePage, it) }
                                 .toList()
                     }
                 }
-                .orElse(emptyList())
+                .mapBoth(
+                        {it},
+                        {
+                            logger.error("Cannot parse ${timetablePage.groupName} ICS! Error: $it")
+                            emptyList()
+                        }
+                )
     }
 
     private fun createCourse(timetablePage: TimetablePage, event: IcsEvent): Course {
