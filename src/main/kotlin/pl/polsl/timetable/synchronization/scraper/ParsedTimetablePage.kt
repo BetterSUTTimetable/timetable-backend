@@ -76,11 +76,12 @@ class ParsedTimetablePage(
                 }
                 .toSet()
 
-    override val icsFile: BufferedReader =
+    override val icsFile: BufferedReader by lazy {
         icsFileFactory(
                 document
-                .select(".data a")
-                .firstOrNull { it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google" }
-                ?.absUrl("href") ?: throw RuntimeException("`$groupName` timetable doesn't contain ICS link!")
+                        .select(".data a")
+                        .firstOrNull { it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google" }
+                        ?.absUrl("href") ?: throw RuntimeException("`$groupName` timetable doesn't contain ICS link!")
         )
+    }
 }
