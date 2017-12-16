@@ -12,10 +12,18 @@ import java.net.URL
 import java.util.*
 
 class ParsedTimetablePage(
-        private val document: Document,
+        document: Document,
         icsFileFactory: (String) -> BufferedReader,
         private val lecturerFactory: (String, URL) -> Result<Lecturer, Throwable>
 ): TimetablePage {
+    private val allCourseLinks = {
+        document.select(".coursediv a")
+                .map {
+                    it.absUrl("href") to it
+                }
+                .filter { (first, _) -> first != null }
+    }()
+
     override val groupName: String = {
         val text = document
                 .select("div .title")
@@ -30,14 +38,6 @@ class ParsedTimetablePage(
                 ?.value
                 ?.trim()
                 ?: throw RuntimeException("Cannot find group name in timetable!")
-    }()
-
-    private val allCourseLinks = {
-        document.select(".coursediv a")
-                .map {
-                    it.absUrl("href") to it
-                }
-                .filter { (first, _) -> first != null }
     }()
 
     override val classNames: Map<String, String> = {
@@ -78,10 +78,12 @@ class ParsedTimetablePage(
 
     override val icsFile: BufferedReader by lazy {
         icsFileFactory(
-                document
-                        .select(".data a")
-                        .firstOrNull { it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google" }
-                        ?.absUrl("href") ?: throw RuntimeException("`$groupName` timetable doesn't contain ICS link!")
+                icsFileLink
         )
     }
+
+    private val icsFileLink = document
+            .select(".data a")
+            .firstOrNull { it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google" }
+            ?.absUrl("href") ?: throw RuntimeException("`$groupName` timetable doesn't contain ICS link!")
 }
