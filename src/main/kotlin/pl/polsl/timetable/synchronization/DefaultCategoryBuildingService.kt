@@ -27,14 +27,16 @@ class DefaultCategoryBuildingService(
     }
 
     private fun recreate(category: Category, parent: JpaCategory?) {
-        logger.info("Recreating category ${category.name}")
-        val jpaCategory = categoryCreationService.findOrCreate(parent, category.name)
+        try {
+            logger.info("Recreating category ${category.name}")
+            val jpaCategory = categoryCreationService.findOrCreate(parent, category.name)
 
-        val courses = category.courses()
-        logger.info("Deleting courses category $jpaCategory")
-        courseRepository.deleteByCategory(jpaCategory)
-        courseBuildingService.updateCourses(jpaCategory, courses)
-
-        category.subcategories.forEach { recreate(it, jpaCategory) }
+            val courses = category.courses()
+            logger.info("Deleting courses category $jpaCategory")
+            courseBuildingService.updateCourses(jpaCategory, courses)
+            category.subcategories.forEach { recreate(it, jpaCategory) }
+        } catch (e: Exception) {
+            logger.error("Cannot recreate category $category!", e)
+        }
     }
 }
