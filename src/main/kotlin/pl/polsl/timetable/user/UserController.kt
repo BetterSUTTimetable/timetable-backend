@@ -5,6 +5,7 @@ import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.web.bind.annotation.*
+import pl.polsl.timetable.course.Course
 import pl.polsl.timetable.course.CourseService
 import pl.polsl.timetable.course.JpaCourse
 import pl.polsl.timetable.course.category.IdentifiableCategory
@@ -14,10 +15,9 @@ import java.time.Instant
 @RestController
 class UserController(
         private val userService: UserService,
-
         private val coursesService: CourseService
 ) {
-    @RequestMapping(method = arrayOf(RequestMethod.POST, RequestMethod.PUT), value= ["/users"])
+    @RequestMapping(method = [RequestMethod.POST, RequestMethod.PUT], value= ["/users"])
     @ApiOperation(
             value = "Register a new user."
     )
@@ -26,13 +26,13 @@ class UserController(
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = arrayOf(RequestMethod.GET), value= ["/user/me"])
+    @RequestMapping(method = [RequestMethod.GET], value= ["/user/me"])
     fun currentUser(principal: Principal?): User {
         return userService.find(principal!!)
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = arrayOf(RequestMethod.GET), value= ["/user/me/courses"])
+    @RequestMapping(method = [RequestMethod.GET], value= ["/user/me/courses"])
     fun currentUserCourses(
             principal: Principal?,
 
@@ -51,7 +51,7 @@ class UserController(
             )
             @RequestParam(name = "to", required = true)
             to: Instant
-    ): List<JpaCourse> {
+    ): List<Course> {
         val currentUser = userService.find(principal!!)
         return coursesService.userCoursesBetween(currentUser, from..to)
     }

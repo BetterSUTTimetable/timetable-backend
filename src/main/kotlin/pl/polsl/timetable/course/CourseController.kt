@@ -14,7 +14,7 @@ class CourseController(
         @Autowired
         private val courseService: CourseService
 ) {
-    @RequestMapping(method = [RequestMethod.GET], value = "/category/{id}/courses")
+    @RequestMapping(method = [RequestMethod.GET], value = ["/category/{id}/courses"])
     fun courses(
             @PathVariable
             id: Long,

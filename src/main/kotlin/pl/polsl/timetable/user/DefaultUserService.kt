@@ -5,14 +5,13 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.security.core.userdetails.UsernameNotFoundException
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.security.Principal
 
 @Service
+@Transactional
 class DefaultUserService(
-        @Autowired
         private val userRepository: UserRepository,
-
-        @Autowired
         private val passwordEncoder: PasswordEncoder
 ): UserService {
     override fun create(userData: UserLoginData) {
@@ -32,7 +31,7 @@ class DefaultUserService(
 
     override fun find(principal: Principal): User {
         return userRepository
-                .findByEmail(principal.name ?: "")
+                .findByEmail(principal.name)
                 .orElseThrow { UsernameNotFoundException("There is no user ${principal.name}!") }
     }
 }

@@ -34,9 +34,9 @@ class JpaUser(
         get() = _id
 
     @get:Transient
-    @delegate:Transient
-    override val filters: Map<IdentifiableCategory, List<CourseFilterData>> by lazy<Map<IdentifiableCategory, List<CourseFilterData>>> {
-        jpaFilters.groupBy { it.category }
-    }
+    override val filters: Map<IdentifiableCategory, List<CourseFilterData>>
+        get() {
+            return jpaFilters.groupBy { it.category }
+        }
 
 }
