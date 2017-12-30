@@ -3,7 +3,7 @@ package pl.polsl.timetable.user
 import com.fasterxml.jackson.annotation.JsonIgnore
 import pl.polsl.timetable.course.category.IdentifiableCategory
 import pl.polsl.timetable.course.category.JpaCategory
-import pl.polsl.timetable.course.filter.CourseFilterData
+import pl.polsl.timetable.course.filter.IdentifiableCourseFilterData
 import pl.polsl.timetable.course.filter.JpaCourseFilterData
 import javax.persistence.*
 
@@ -38,7 +38,7 @@ class JpaUser(
 
     @get:Transient
     @get:JsonIgnore
-    override val filters: Map<IdentifiableCategory, List<CourseFilterData>>
+    override val filters: Map<IdentifiableCategory, List<IdentifiableCourseFilterData>>
         get() {
             return jpaFilters.groupBy { it.category }
         }

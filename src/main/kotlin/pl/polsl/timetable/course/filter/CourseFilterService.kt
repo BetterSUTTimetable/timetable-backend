@@ -1,5 +1,8 @@
 package pl.polsl.timetable.course.filter
 
+import pl.polsl.timetable.user.User
+
 interface CourseFilterService {
-    fun createFilterForUser(userId: Long, filterDefinition: CourseFilterDefinition)
+    fun createFilter(user: User, filterDefinition: CourseFilterDefinition)
+    fun deleteFilter(user: User, filterId: Long)
 }

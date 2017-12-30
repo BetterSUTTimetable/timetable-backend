@@ -1,7 +1,7 @@
 package pl.polsl.timetable.course
 
-import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import pl.polsl.timetable.course.category.CategoryNotFoundException
 import pl.polsl.timetable.course.category.CategoryRepository
 import pl.polsl.timetable.course.filter.CourseFilterComposite
@@ -11,6 +11,7 @@ import java.sql.Timestamp
 import java.time.Instant
 
 @Service
+@Transactional
 class DefaultCourseService(
         private val courseRepository: CourseRepository,
         private val categoryRepository: CategoryRepository

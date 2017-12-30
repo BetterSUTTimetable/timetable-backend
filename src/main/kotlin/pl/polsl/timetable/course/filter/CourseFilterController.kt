@@ -1,31 +1,32 @@
 package pl.polsl.timetable.course.filter
 
 import org.springframework.security.access.prepost.PreAuthorize
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RequestMapping
-import org.springframework.web.bind.annotation.RequestMethod
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.security.core.annotation.AuthenticationPrincipal
+import org.springframework.web.bind.annotation.*
 import pl.polsl.timetable.course.category.IdentifiableCategory
+import pl.polsl.timetable.user.User
 import pl.polsl.timetable.user.UserService
 import java.security.Principal
 
 @RestController
 class CourseFilterController(
-        private val userService: UserService,
         private val courseFilterService: CourseFilterService
-){
-
+) {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = [RequestMethod.PUT, RequestMethod.POST], value= ["/filters"])
-    fun addFilter(principal: Principal?, @RequestBody filterData: CourseFilterDefinition) {
-        val id = userService.find(principal!!).id
-        courseFilterService.createFilterForUser(id, filterData)
+    fun addFilter(@AuthenticationPrincipal user: User, @RequestBody filterData: CourseFilterDefinition) {
+        courseFilterService.createFilter(user, filterData)
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(method = [RequestMethod.DELETE], value= ["/filter/{id}"])
+    fun deleteFilter(@AuthenticationPrincipal user: User, @PathVariable filterId: Long) {
+        courseFilterService.deleteFilter(user, filterId)
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = [RequestMethod.GET], value= ["/filters"])
-    fun filters(principal: Principal?): List<IdentifiableCourseFilterData> {
-        val id = userService.find(principal!!).id
-        TODO()
+    fun filters(@AuthenticationPrincipal user: User): List<IdentifiableCourseFilterData> {
+        return user.filters.flatMap { it.value }
     }
 }

@@ -1,7 +1,7 @@
 package pl.polsl.timetable.user
 
 import pl.polsl.timetable.course.category.IdentifiableCategory
-import pl.polsl.timetable.course.filter.CourseFilterData
+import pl.polsl.timetable.course.filter.IdentifiableCourseFilterData
 
 interface User {
     val id: Long
@@ -9,5 +9,5 @@ interface User {
     val passwordHash: String
     val selectedCategories: Set<IdentifiableCategory>
     val favoriteCategories: Set<IdentifiableCategory>
-    val filters: Map<IdentifiableCategory, List<CourseFilterData>>
+    val filters: Map<IdentifiableCategory, List<IdentifiableCourseFilterData>>
 }

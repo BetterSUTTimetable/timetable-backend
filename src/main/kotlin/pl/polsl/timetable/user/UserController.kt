@@ -17,7 +17,8 @@ import java.time.Instant
 @RestController
 class UserController(
         private val userService: UserService,
-        private val coursesService: CourseService
+        private val coursesService: CourseService,
+        private val selectedCategoriesService: SelectedCategoriesService
 ) {
     @RequestMapping(method = [RequestMethod.POST, RequestMethod.PUT], value = ["/users"])
     @ApiOperation(
@@ -36,7 +37,8 @@ class UserController(
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = [RequestMethod.GET], value = ["/courses"])
     fun currentUserCourses(
-            authentication: Authentication,
+            @AuthenticationPrincipal
+            user: User,
 
             @ApiParam(
                     value = "Date and time in ISO 8601 format acceptable " +
@@ -54,7 +56,7 @@ class UserController(
             @RequestParam(name = "to", required = true)
             to: Instant
     ): List<Course> {
-        return coursesService.userCoursesBetween(authentication.user(), from..to)
+        return coursesService.userCoursesBetween(user, from..to)
     }
 
     @PreAuthorize("isAuthenticated()")
@@ -64,21 +66,14 @@ class UserController(
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = [RequestMethod.GET], value = ["/selected_category/{categoryId}"])
-    fun selectedCategory(authentication: Authentication, @PathVariable categoryId: Long): IdentifiableCategory {
-        TODO()
-        //return currentUser.selectedCategories.first { it.id == categoryId }
-    }
-
-    @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = [RequestMethod.POST], value = ["/selected_categories"])
-    fun addSelectedCategory(principal: Principal?, @RequestBody categoryId: Long) {
-        userService.addSelectedCategory(principal!!, categoryId)
+    fun addSelectedCategory(@AuthenticationPrincipal user: User, @RequestBody categoryId: Long) {
+        selectedCategoriesService.addSelectedCategory(user, categoryId)
     }
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = [RequestMethod.DELETE], value = ["/selected_category/{categoryId}"])
-    fun removeSelectedCategory(principal: Principal?, @PathVariable categoryId: Long) {
-        userService.removeSelectedCategory(principal!!, categoryId)
+    fun removeSelectedCategory(@AuthenticationPrincipal user: User, @PathVariable categoryId: Long) {
+        selectedCategoriesService.removeSelectedCategory(user, categoryId)
     }
 }
