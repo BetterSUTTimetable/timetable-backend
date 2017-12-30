@@ -16,12 +16,15 @@ class JpaUser(
         override val passwordHash: String,
 
         @ManyToMany
+        @JsonIgnore
         override val selectedCategories: MutableSet<JpaCategory> = mutableSetOf(),
 
         @ManyToMany
+        @JsonIgnore
         override val favoriteCategories: MutableSet<JpaCategory> = mutableSetOf(),
 
         @OneToMany
+        @JsonIgnore
         val jpaFilters: MutableList<JpaCourseFilterData> = mutableListOf()
 ) : User {
     @Id
@@ -34,6 +37,7 @@ class JpaUser(
         get() = _id
 
     @get:Transient
+    @get:JsonIgnore
     override val filters: Map<IdentifiableCategory, List<CourseFilterData>>
         get() {
             return jpaFilters.groupBy { it.category }

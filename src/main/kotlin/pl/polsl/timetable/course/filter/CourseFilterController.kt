@@ -17,8 +17,15 @@ class CourseFilterController(
 
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = [RequestMethod.PUT, RequestMethod.POST], value= ["/filters"])
-    fun filters(principal: Principal?, @RequestBody filterData: CourseFilterDefinition) {
+    fun addFilter(principal: Principal?, @RequestBody filterData: CourseFilterDefinition) {
         val id = userService.find(principal!!).id
         courseFilterService.createFilterForUser(id, filterData)
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(method = [RequestMethod.GET], value= ["/filters"])
+    fun filters(principal: Principal?): List<IdentifiableCourseFilterData> {
+        val id = userService.find(principal!!).id
+        TODO()
     }
 }

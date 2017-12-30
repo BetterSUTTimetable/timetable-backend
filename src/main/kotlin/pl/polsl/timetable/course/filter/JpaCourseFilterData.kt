@@ -25,13 +25,13 @@ class JpaCourseFilterData(
 
         @Column(name = "time")
         private val sqlTime: java.sql.Time
-) : CourseFilterData {
+) : IdentifiableCourseFilterData {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(nullable = false, updatable = false, name = "id")
     private var _id: Long = 0L
 
-    val id: Long
+    override val id: Long
         @Transient
         get() = _id
 

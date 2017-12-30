@@ -4,6 +4,8 @@ import io.swagger.annotations.ApiModel
 import io.swagger.annotations.ApiOperation
 import io.swagger.annotations.ApiParam
 import org.springframework.security.access.prepost.PreAuthorize
+import org.springframework.security.core.Authentication
+import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
 import pl.polsl.timetable.course.Course
 import pl.polsl.timetable.course.CourseService
@@ -17,7 +19,7 @@ class UserController(
         private val userService: UserService,
         private val coursesService: CourseService
 ) {
-    @RequestMapping(method = [RequestMethod.POST, RequestMethod.PUT], value= ["/users"])
+    @RequestMapping(method = [RequestMethod.POST, RequestMethod.PUT], value = ["/users"])
     @ApiOperation(
             value = "Register a new user."
     )
@@ -26,15 +28,15 @@ class UserController(
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = [RequestMethod.GET], value= ["/user/me"])
-    fun currentUser(principal: Principal?): User {
-        return userService.find(principal!!)
+    @RequestMapping(method = [RequestMethod.GET], value = ["/user/me"])
+    fun currentUser(authentication: Authentication): User {
+        return authentication.user()
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = [RequestMethod.GET], value= ["/user/me/courses"])
+    @RequestMapping(method = [RequestMethod.GET], value = ["/courses"])
     fun currentUserCourses(
-            principal: Principal?,
+            authentication: Authentication,
 
             @ApiParam(
                     value = "Date and time in ISO 8601 format acceptable " +
@@ -52,14 +54,31 @@ class UserController(
             @RequestParam(name = "to", required = true)
             to: Instant
     ): List<Course> {
-        val currentUser = userService.find(principal!!)
-        return coursesService.userCoursesBetween(currentUser, from..to)
+        return coursesService.userCoursesBetween(authentication.user(), from..to)
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = [RequestMethod.GET], value= ["/user/me/favorite_categories"])
-    fun currentUserFavoriteCategories(principal: Principal?): Set<IdentifiableCategory> {
-        val currentUser = userService.find(principal!!)
-        return currentUser.favoriteCategories
+    @RequestMapping(method = [RequestMethod.GET], value = ["/selected_categories"])
+    fun selectedCategories(@AuthenticationPrincipal user: User): Set<IdentifiableCategory> {
+        return user.selectedCategories
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(method = [RequestMethod.GET], value = ["/selected_category/{categoryId}"])
+    fun selectedCategory(authentication: Authentication, @PathVariable categoryId: Long): IdentifiableCategory {
+        TODO()
+        //return currentUser.selectedCategories.first { it.id == categoryId }
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(method = [RequestMethod.POST], value = ["/selected_categories"])
+    fun addSelectedCategory(principal: Principal?, @RequestBody categoryId: Long) {
+        userService.addSelectedCategory(principal!!, categoryId)
+    }
+
+    @PreAuthorize("isAuthenticated()")
+    @RequestMapping(method = [RequestMethod.DELETE], value = ["/selected_category/{categoryId}"])
+    fun removeSelectedCategory(principal: Principal?, @PathVariable categoryId: Long) {
+        userService.removeSelectedCategory(principal!!, categoryId)
     }
 }
