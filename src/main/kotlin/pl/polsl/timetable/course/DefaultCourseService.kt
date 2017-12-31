@@ -7,12 +7,14 @@ import pl.polsl.timetable.course.category.CategoryRepository
 import pl.polsl.timetable.course.filter.CourseFilterComposite
 import pl.polsl.timetable.course.filter.DataBasedCourseFilter
 import pl.polsl.timetable.user.User
+import pl.polsl.timetable.user.UserRepository
 import java.sql.Timestamp
 import java.time.Instant
 
 @Service
 @Transactional
 class DefaultCourseService(
+        private val userRepository: UserRepository,
         private val courseRepository: CourseRepository,
         private val categoryRepository: CategoryRepository
 ): CourseService {
@@ -26,15 +28,15 @@ class DefaultCourseService(
     }
 
     override fun userCoursesBetween(user: User, timeRange: ClosedRange<Instant>): List<JpaCourse> {
-        val courses = user.selectedCategories.flatMap { category ->
+        val jpaUser = userRepository.findOne(user.id)
+        return jpaUser.selectedCategories.flatMap { category ->
             val filter = CourseFilterComposite(
-                    user
+                    jpaUser
                             .filters[category]
                             ?.map(::DataBasedCourseFilter)
                             ?: emptyList()
             )
             coursesBetween(category.id, timeRange).filterNot(filter)
         }
-        return courses
     }
 }

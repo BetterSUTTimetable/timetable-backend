@@ -11,7 +11,6 @@ import javax.websocket.server.PathParam
 
 @RestController
 class CourseController(
-        @Autowired
         private val courseService: CourseService
 ) {
     @RequestMapping(method = [RequestMethod.GET], value = ["/category/{id}/courses"])

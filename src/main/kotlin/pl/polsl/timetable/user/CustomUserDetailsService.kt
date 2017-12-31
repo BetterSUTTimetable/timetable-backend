@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service
 
 @Service
 class CustomUserDetailsService(
-        @Autowired
         private val userRepository: UserRepository
 ): UserDetailsService {
     override fun loadUserByUsername(username: String): UserDetails {

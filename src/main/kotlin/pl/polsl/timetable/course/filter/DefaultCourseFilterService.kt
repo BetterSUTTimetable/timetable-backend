@@ -17,7 +17,7 @@ class DefaultCourseFilterService(
     private val userRepository: UserRepository
 ): CourseFilterService {
     override fun createFilter(user: User, filterDefinition: CourseFilterDefinition) {
-        user as JpaUser
+        val jpaUser =  userRepository.findOne(user.id)
         val course = courseRepository.findOne(filterDefinition.courseId)
 
         val filter = JpaCourseFilterData.create(
@@ -29,19 +29,24 @@ class DefaultCourseFilterService(
                 duration = course.duration
         )
 
-        user.jpaFilters.add(filter)
+        jpaUser.jpaFilters.add(filter)
         courseFilterRepository.save(filter)
-        userRepository.save(user)
+        userRepository.save(jpaUser)
     }
 
     override fun deleteFilter(user: User, filterId: Long) {
         val filter = courseFilterRepository.findOne(filterId)
-        user as JpaUser
-        if (user.jpaFilters.removeIf { it.id == filterId }) {
-            userRepository.save(user)
+        val jpaUser =  userRepository.findOne(user.id)
+        if (jpaUser.jpaFilters.removeIf { it.id == filterId }) {
+            userRepository.save(jpaUser)
             courseFilterRepository.delete(filter)
         } else {
             TODO("throw meaningful exception")
         }
+    }
+
+    override fun filters(user: User): List<IdentifiableCourseFilterData> {
+        val jpaUser = userRepository.findOne(user.id)
+        return jpaUser.filters.flatMap { it.value }
     }
 }
