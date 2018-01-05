@@ -6,6 +6,7 @@ import pl.polsl.timetable.course.CourseRepository
 import pl.polsl.timetable.user.JpaUser
 import pl.polsl.timetable.user.User
 import pl.polsl.timetable.user.UserRepository
+import pl.polsl.timetable.util.InvalidIdException
 import java.time.LocalTime
 import java.time.ZoneId
 
@@ -16,9 +17,15 @@ class DefaultCourseFilterService(
     private val courseRepository: CourseRepository,
     private val userRepository: UserRepository
 ): CourseFilterService {
+    @Throws(InvalidIdException::class)
     override fun createFilter(user: User, filterDefinition: CourseFilterDefinition) {
-        val jpaUser =  userRepository.findOne(user.id)
-        val course = courseRepository.findOne(filterDefinition.courseId)
+        val jpaUser = userRepository
+                .findOne(user.id)
+                ?: throw InvalidIdException("User ${user.id} doesn't exists!")
+
+        val course = courseRepository
+                .findOne(filterDefinition.courseId)
+                ?: throw InvalidIdException("Course ${filterDefinition.courseId} doesn't exists!")
 
         val filter = JpaCourseFilterData.create(
                 category = course.category,
@@ -34,6 +41,7 @@ class DefaultCourseFilterService(
         userRepository.save(jpaUser)
     }
 
+    @Throws(InvalidIdException::class)
     override fun deleteFilter(user: User, filterId: Long) {
         val filter = courseFilterRepository.findOne(filterId)
         val jpaUser =  userRepository.findOne(user.id)
@@ -41,7 +49,7 @@ class DefaultCourseFilterService(
             userRepository.save(jpaUser)
             courseFilterRepository.delete(filter)
         } else {
-            TODO("throw meaningful exception")
+            throw InvalidIdException("Filter $filterId is not in user's ${user.id} filters!")
         }
     }
 
