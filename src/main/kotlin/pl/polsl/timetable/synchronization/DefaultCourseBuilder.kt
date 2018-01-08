@@ -16,7 +16,6 @@ import java.time.Duration
 
 @Component
 class DefaultCourseBuilder(
-        @Autowired
         private val parser: IcsFileParser
 ): CoursesBuilder {
 
