@@ -27,11 +27,19 @@ class DefaultCourseFilterService(
                 .findOne(filterDefinition.courseId)
                 ?: throw InvalidIdException("Course ${filterDefinition.courseId} doesn't exists!")
 
+        val week = if (filterDefinition.week == WeekInterval.EveryWeek) {
+            Week.EveryWeek
+        } else if (Week.EvenWeek(course.beginTime)) {
+            Week.EvenWeek
+        } else {
+            Week.OddWeek
+        }
+
         val filter = JpaCourseFilterData.create(
                 category = course.category,
                 courseType = course.courseType,
                 fullCourseName = course.name.fullName,
-                week = filterDefinition.week,
+                week = week,
                 time = LocalTime.from(course.beginTime.atZone(ZoneId.of("GMT"))),
                 duration = course.duration
         )

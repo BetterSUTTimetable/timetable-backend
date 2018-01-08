@@ -5,5 +5,5 @@ import pl.polsl.timetable.GenerateNoArg
 @GenerateNoArg
 data class CourseFilterDefinition(
         val courseId: Long,
-        val week: Week
+        val week: WeekInterval
 )

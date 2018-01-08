@@ -1,5 +1,6 @@
 package pl.polsl.timetable.course.filter
 
+import io.swagger.annotations.*
 import org.springframework.security.access.prepost.PreAuthorize
 import org.springframework.security.core.annotation.AuthenticationPrincipal
 import org.springframework.web.bind.annotation.*
@@ -15,7 +16,14 @@ class CourseFilterController(
 ) {
     @PreAuthorize("isAuthenticated()")
     @RequestMapping(method = [RequestMethod.PUT, RequestMethod.POST], value= ["/filters"])
-    fun addFilter(@AuthenticationPrincipal userDetails: CustomUserDetails, @RequestBody filterData: CourseFilterDefinition) {
+    fun addFilter(
+            @AuthenticationPrincipal
+            userDetails: CustomUserDetails,
+
+            @ApiParam(value = "Allowed values for \"week\": \"EveryWeek\" or \"EveryTwoWeeks\"")
+            @RequestBody
+            filterData: CourseFilterDefinition
+    ) {
         courseFilterService.createFilter(userDetails.user, filterData)
     }
 
@@ -30,4 +38,7 @@ class CourseFilterController(
     fun filters(@AuthenticationPrincipal userDetails: CustomUserDetails): List<IdentifiableCourseFilterData> {
         return courseFilterService.filters(userDetails.user)
     }
+
+    @RequestMapping(method = [RequestMethod.GET], value = ["/week_intervals"])
+    fun weekIntervals() = WeekInterval.translations()
 }
