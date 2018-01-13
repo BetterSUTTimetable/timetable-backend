@@ -48,7 +48,9 @@ class DefaultCourseBuilder(
 
         val (classrooms, afterAllExtractions) = extractClassrooms(timetablePage, afterLecturersExtraction)
 
-        val shortCourseName = if (splitSummary.size == 2) splitSummary.first() else afterAllExtractions
+        val shortCourseName = if (splitSummary.size == 2)  splitSummary.first()
+        else if(splitSummary.toString().contains("WF")) "WF"
+        else afterAllExtractions
 
         val longCourseName = timetablePage.classNames[shortCourseName] ?: shortCourseName
 
@@ -88,6 +90,7 @@ class DefaultCourseBuilder(
                 lecturers.add(lecturer)
             }
         }
+
         return lecturers to processedString
     }
 
