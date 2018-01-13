@@ -48,11 +48,9 @@ class DefaultCourseBuilder(
 
         val (classrooms, afterAllExtractions) = extractClassrooms(timetablePage, afterLecturersExtraction)
 
-        val shortCourseName = if (splitSummary.size == 2)  splitSummary.first()
-        else if(splitSummary.toString().contains("WF")) "WF"
-        else afterAllExtractions
+        val shortCourseName = (if (splitSummary.size == 2) splitSummary.first() else afterAllExtractions).trim()
 
-        val longCourseName = timetablePage.classNames[shortCourseName] ?: shortCourseName
+        val longCourseName = timetablePage.classNames[shortCourseName]?.trim() ?: shortCourseName
 
         val courseName = DefaultCourseName(shortName = shortCourseName, fullName = longCourseName)
 
@@ -86,7 +84,7 @@ class DefaultCourseBuilder(
         for (lecturer in timetablePage.lecturers) {
             val regex = Regex("\\b(\\Q${lecturer.shortName}\\E)\\b")
             if (processedString.contains(regex)) {
-                processedString = processedString.replace(regex, "")
+                processedString = processedString.replaceFirst(regex, "")
                 lecturers.add(lecturer)
             }
         }
@@ -100,7 +98,7 @@ class DefaultCourseBuilder(
         for (classroom in timetablePage.classrooms) {
             val regex = Regex("\\b(\\Q${classroom.room}\\E)\\b")
             if (processedString.contains(regex)) {
-                processedString = processedString.replace(regex, "")
+                processedString = processedString.replaceFirst(regex, "")
                 classrooms.add(classroom)
             }
         }

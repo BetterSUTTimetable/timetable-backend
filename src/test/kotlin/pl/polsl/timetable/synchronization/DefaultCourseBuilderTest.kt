@@ -44,20 +44,22 @@ class DefaultCourseBuilderTest {
 
     @Test
     fun wfTest() {
-        val entry = """BEGIN:VCALENDAR
-BEGIN:VEVENT
-DTSTART:20171002T090000Z
-DTEND:20171002T103000Z
-DTSTAMP:20180110T232318Z
-UID:20171002090000
-CLASS:PUBLIC
-SEQUENCE:0
-STATUS:CONFIRMED
-SUMMARY:WF   WF OSiR
-TRANSP:OPAQUE
-END:VEVENT
-END:VCALENDAR
-"""
+        val entry = """
+            BEGIN:VCALENDAR
+            |BEGIN:VEVENT
+            |DTSTART:20171002T090000Z
+            |DTEND:20171002T103000Z
+            |DTSTAMP:20180110T232318Z
+            |UID:20171002090000
+            |CLASS:PUBLIC
+            |SEQUENCE:0
+            |STATUS:CONFIRMED
+            |SUMMARY:WF   WF OSiR
+            |TRANSP:OPAQUE
+            |END:VEVENT
+            |END:VCALENDAR"""
+                .trimMargin()
+        
         val builder = DefaultCourseBuilder(DefaultIcsFileParser())
         val timetable = Mockito.mock(TimetablePage::class.java)
         val expectedLecturer = DefaultLecturer("Prow. WF", "WF")
