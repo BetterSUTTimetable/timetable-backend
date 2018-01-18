@@ -28,7 +28,7 @@ class CourseFilterController(
     }
 
     @PreAuthorize("isAuthenticated()")
-    @RequestMapping(method = [RequestMethod.DELETE], value= ["/filter/{id}"])
+    @RequestMapping(method = [RequestMethod.DELETE], value= ["/filter/{filterId}"])
     fun deleteFilter(@AuthenticationPrincipal userDetails: CustomUserDetails, @PathVariable filterId: Long) {
         courseFilterService.deleteFilter(userDetails.user, filterId)
     }
