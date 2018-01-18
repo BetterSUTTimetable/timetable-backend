@@ -59,7 +59,7 @@ class DefaultCourseBuilderTest {
             |END:VEVENT
             |END:VCALENDAR"""
                 .trimMargin()
-        
+
         val builder = DefaultCourseBuilder(DefaultIcsFileParser())
         val timetable = Mockito.mock(TimetablePage::class.java)
         val expectedLecturer = DefaultLecturer("Prow. WF", "WF")
