@@ -55,19 +55,25 @@ class DefaultCategoryScraper(
 
         val category =
                 Result.of {
-                    URL(leafUrl.toString() + "&winW=1584&winH=818&loadBG=000000")
+                    generateTimetablesUrls(leafUrl)
                 }
-                .map { Jsoup.connect(it.toString()).get() }
-                .map {
-                    if (hasCourses(it)) {
-                        timetablePageFactory.create(it).map {
-                            LeafCategory(it, coursesBuilder)
-                        }
-                    } else {
-                        Result.of{ EmptyCategory(it) }
+                .andThen {
+                    Result.of {
+                        it
+                                .map {
+                                    Jsoup.connect(it.toString()).get()
+                                }
+                                .firstOrNull {
+                                    hasCourses(it)
+                                } ?: throw RuntimeException("$leafUrl doesn't contain any courses!")
                     }
                 }
-                .andThen { it }
+                .andThen {
+                    timetablePageFactory.create(it).map {
+                        LeafCategory(it, coursesBuilder)
+                    }
+                }
+                .map { it }
 
         category.onFailure { logger.warn("Cannot create leaf category $url . $it") }
 

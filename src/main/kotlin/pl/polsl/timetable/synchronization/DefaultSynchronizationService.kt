@@ -10,7 +10,8 @@ import pl.polsl.timetable.synchronization.scraper.CategoryScraper
 @Service
 class DefaultSynchronizationService(
         private val categoryScraper: CategoryScraper,
-        private val categoryBuildingService: CategoryBuildingService
+        private val categoryBuildingService: CategoryBuildingService,
+        private val categoryCleaningService: CategoryCleaningService
 
 ): SynchronizationService {
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -21,7 +22,10 @@ class DefaultSynchronizationService(
 
         categoryScraper.scrape().mapBoth(
                 {
+                    logger.info("Starting recreation procedure...")
                     categoryBuildingService.recreate(it)
+                    logger.info("Cleaning nonexistent categories...")
+                    categoryCleaningService.removeNonexistentCategories(it)
                     logger.info("Synchronization finished!")
                 },
                 {

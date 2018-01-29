@@ -8,6 +8,5 @@ interface User {
     val email: String
     val passwordHash: String
     val selectedCategories: Set<IdentifiableCategory>
-    val favoriteCategories: Set<IdentifiableCategory>
     val filters: Map<IdentifiableCategory, List<IdentifiableCourseFilterData>>
 }

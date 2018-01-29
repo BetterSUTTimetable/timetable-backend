@@ -1,6 +1,8 @@
 package pl.polsl.timetable.user
 
 import com.fasterxml.jackson.annotation.JsonIgnore
+import org.hibernate.annotations.Cascade
+import org.hibernate.annotations.CascadeType
 import pl.polsl.timetable.course.category.IdentifiableCategory
 import pl.polsl.timetable.course.category.JpaCategory
 import pl.polsl.timetable.course.filter.IdentifiableCourseFilterData
@@ -16,12 +18,9 @@ class JpaUser(
         override val passwordHash: String,
 
         @ManyToMany
+        @Cascade(CascadeType.DELETE)
         @JsonIgnore
         override val selectedCategories: MutableSet<JpaCategory> = mutableSetOf(),
-
-        @ManyToMany
-        @JsonIgnore
-        override val favoriteCategories: MutableSet<JpaCategory> = mutableSetOf(),
 
         @OneToMany
         @JsonIgnore
