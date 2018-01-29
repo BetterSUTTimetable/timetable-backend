@@ -16,29 +16,14 @@ class ParsedTimetablePage(
         icsFileFactory: (String) -> BufferedReader,
         private val lecturerFactory: (String, URL) -> Result<Lecturer, Throwable>
 ): TimetablePage {
-    private val allCourseLinks = {
-        document.select(".coursediv a")
+    private val allCourseLinks =
+            document.select(".coursediv a")
                 .map {
                     it.absUrl("href") to it
                 }
                 .filter { (first, _) -> first != null }
-    }()
 
-    override val groupName: String = {
-        val text = document
-                .select("div .title")
-                .map { it.text() }
-                .firstOrNull { it.startsWith("Plan zajęć") }
-                ?: throw RuntimeException("Cannot find group name in timetable!")
-
-        Regex("Plan zajęć - (.*), semestr")
-                .find(text)
-                ?.groups
-                ?.get(1)
-                ?.value
-                ?.trim()
-                ?: throw RuntimeException("Cannot find group name in timetable!")
-    }()
+    override val groupName: String = findGroupName(document)
 
     override val classNames: Map<String, String> = {
         val legend = document.select(".data").firstOrNull()
@@ -84,6 +69,8 @@ class ParsedTimetablePage(
 
     private val icsFileLink = document
             .select(".data a")
-            .firstOrNull { it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google" }
+            .firstOrNull {
+                it.text().trim() == "plan.ics - dane z zajęciami dla kalendarzy MS Outlook, Kalendarz Google"
+            }
             ?.absUrl("href") ?: throw RuntimeException("`$groupName` timetable doesn't contain ICS link!")
 }

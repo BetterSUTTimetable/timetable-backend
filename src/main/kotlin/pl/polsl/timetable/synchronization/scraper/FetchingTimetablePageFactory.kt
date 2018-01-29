@@ -3,6 +3,7 @@ package pl.polsl.timetable.synchronization.scraper
 import com.github.michaelbull.result.Result
 import com.github.michaelbull.result.onFailure
 import org.jsoup.Jsoup
+import org.jsoup.nodes.Document
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
@@ -11,21 +12,20 @@ import java.net.URL
 
 @Component
 class FetchingTimetablePageFactory(
-    @Autowired
     private val lecturerFactory: (String, URL) -> Result<Lecturer, Throwable>
 ): TimetablePageFactory {
     private val logger = LoggerFactory.getLogger(this.javaClass)
 
-    override fun create(url: URL): Result<TimetablePage, Throwable> {
+    override fun create(document: Document): Result<TimetablePage, Throwable> {
         val timetable = Result.of {
             ParsedTimetablePage(
-                    Jsoup.connect(url.toString()).get(),
+                    document,
                     IcsFileDownloader(),
                     lecturerFactory
             )
         }
 
-        timetable.onFailure { logger.warn("Cannot create timetable from $url . $it") }
+        timetable.onFailure { logger.warn("Cannot create timetable from ${document.baseUri()} . $it") }
 
         return timetable
     }

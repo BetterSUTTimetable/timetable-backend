@@ -13,11 +13,7 @@ import java.net.URL
 class DefaultCategoryScraper(
         @Value("\${timetable.category-url}")
         url: String,
-
-        @Autowired
         private val coursesBuilder: CoursesBuilder,
-
-        @Autowired
         private val timetablePageFactory: TimetablePageFactory
 ): CategoryScraper {
     private val logger = LoggerFactory.getLogger(this.javaClass)
@@ -55,15 +51,23 @@ class DefaultCategoryScraper(
     }
 
     private fun createLeafCategory(leafUrl: URL): Result<Category, Throwable> {
-        //TODO: change this sick logic please...
         logger.info("Scraping timetable: $leafUrl")
 
-        val category = Result.of {
-            URL(leafUrl.toString() + "&winW=1584&winH=818&loadBG=000000")
-        }
-                .andThen { timetablePageFactory.create(it) }
-                .map { LeafCategory(it, coursesBuilder) }
-
+        val category =
+                Result.of {
+                    URL(leafUrl.toString() + "&winW=1584&winH=818&loadBG=000000")
+                }
+                .map { Jsoup.connect(it.toString()).get() }
+                .map {
+                    if (hasCourses(it)) {
+                        timetablePageFactory.create(it).map {
+                            LeafCategory(it, coursesBuilder)
+                        }
+                    } else {
+                        Result.of{ EmptyCategory(it) }
+                    }
+                }
+                .andThen { it }
 
         category.onFailure { logger.warn("Cannot create leaf category $url . $it") }
 

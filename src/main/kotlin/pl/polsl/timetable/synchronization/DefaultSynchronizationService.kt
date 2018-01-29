@@ -9,10 +9,7 @@ import pl.polsl.timetable.synchronization.scraper.CategoryScraper
 
 @Service
 class DefaultSynchronizationService(
-        @Autowired
         private val categoryScraper: CategoryScraper,
-
-        @Autowired
         private val categoryBuildingService: CategoryBuildingService
 
 ): SynchronizationService {

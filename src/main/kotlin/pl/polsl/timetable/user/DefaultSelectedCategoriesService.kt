@@ -31,6 +31,7 @@ class DefaultSelectedCategoriesService(
     override fun removeSelectedCategory(user: User, categoryId: Long) {
         val jpaUser = userRepository.findOne(user.id)
         if (jpaUser.selectedCategories.removeIf { categoryId == it.id }) {
+            jpaUser.jpaFilters.removeIf { it.category.id == categoryId }
             userRepository.save(jpaUser)
         } else {
             throw InvalidIdException("Category $categoryId is not in user ${user.id} selected categories!")
