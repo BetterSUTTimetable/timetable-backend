@@ -6,6 +6,7 @@ import pl.polsl.timetable.course.Course
 import pl.polsl.timetable.course.CourseType
 import pl.polsl.timetable.course.DefaultCourse
 import pl.polsl.timetable.course.name.DefaultCourseName
+import java.time.DayOfWeek
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalTime
@@ -37,11 +38,18 @@ class DataBasedCourseFilterTest {
         )
     }
 
-    private fun createFilterData(courseType: CourseType, name: String, week: Week, time: LocalTime, duration: Duration): CourseFilterData {
+    private fun createFilterData(
+            courseType: CourseType,
+            name: String, week: Week,
+            dayOfWeek: DayOfWeek,
+            time: LocalTime,
+            duration: Duration
+    ): CourseFilterData {
         return object : CourseFilterData{
             override val courseType = courseType
             override val fullCourseName = name
             override val week: Week = week
+            override val dayOfWeek = dayOfWeek
             override val time: LocalTime = time
             override val duration: Duration = duration
         }
@@ -53,6 +61,7 @@ class DataBasedCourseFilterTest {
                 courseType = type,
                 name = name.fullName,
                 week = Week.EveryWeek,
+                dayOfWeek = DayOfWeek.SUNDAY,
                 time = LocalTime.of(7, 30),
                 duration = duration
         )
@@ -70,6 +79,7 @@ class DataBasedCourseFilterTest {
                 courseType = type,
                 name = name.fullName,
                 week = Week.EvenWeek,
+                dayOfWeek = DayOfWeek.SUNDAY,
                 time = LocalTime.of(7, 30),
                 duration = duration
         )
@@ -86,6 +96,7 @@ class DataBasedCourseFilterTest {
                 courseType = type,
                 name = name.fullName,
                 week = Week.OddWeek,
+                dayOfWeek = DayOfWeek.SUNDAY,
                 time = LocalTime.of(7, 30),
                 duration = duration
         )
@@ -102,6 +113,7 @@ class DataBasedCourseFilterTest {
                 courseType = CourseType.Laboratory,
                 name = name.fullName,
                 week = Week.EveryWeek,
+                dayOfWeek = DayOfWeek.SUNDAY,
                 time = LocalTime.of(7, 30),
                 duration = duration
         )
@@ -118,6 +130,7 @@ class DataBasedCourseFilterTest {
                 courseType = type,
                 name = "WRONG NAME",
                 week = Week.EveryWeek,
+                dayOfWeek = DayOfWeek.SUNDAY,
                 time = LocalTime.of(7, 30),
                 duration = duration
         )
@@ -134,6 +147,7 @@ class DataBasedCourseFilterTest {
                 courseType = type,
                 name = name.fullName,
                 week = Week.EveryWeek,
+                dayOfWeek = DayOfWeek.SUNDAY,
                 time = LocalTime.of(7, 15),
                 duration = duration
         )
@@ -150,8 +164,26 @@ class DataBasedCourseFilterTest {
                 courseType = type,
                 name = name.fullName,
                 week = Week.EveryWeek,
+                dayOfWeek = DayOfWeek.SUNDAY,
                 time = LocalTime.of(7, 30),
                 duration = Duration.ofMinutes(60)
+        )
+
+        val filter = DataBasedCourseFilter(filterData)
+
+        Assert.assertFalse(filter(createEvenCourse()))
+        Assert.assertFalse(filter(createOddCourse()))
+    }
+
+    @Test
+    fun `filter with non-matching day of week should return false`() {
+        val filterData = createFilterData(
+                courseType = type,
+                name = name.fullName,
+                week = Week.EveryWeek,
+                dayOfWeek = DayOfWeek.SATURDAY,
+                time = LocalTime.of(7, 30),
+                duration = Duration.ofMinutes(90)
         )
 
         val filter = DataBasedCourseFilter(filterData)

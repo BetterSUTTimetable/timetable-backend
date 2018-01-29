@@ -14,6 +14,7 @@ class DataBasedCourseFilter(
                 && course.name.fullName == fullCourseName
                 //TODO: which time zone?
                 && LocalTime.from(course.beginTime.atZone(ZoneId.of("UTC"))) == time
+                && course.beginTime.atZone(ZoneId.of("UTC")).dayOfWeek == dayOfWeek
                 && course.duration == duration
                 && week(course.beginTime)
         }

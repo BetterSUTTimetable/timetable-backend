@@ -7,6 +7,7 @@ import pl.polsl.timetable.user.JpaUser
 import pl.polsl.timetable.user.User
 import pl.polsl.timetable.user.UserRepository
 import pl.polsl.timetable.util.InvalidIdException
+import java.time.DayOfWeek
 import java.time.LocalTime
 import java.time.ZoneId
 
@@ -35,11 +36,14 @@ class DefaultCourseFilterService(
             Week.OddWeek
         }
 
+        val dayOfWeek = course.beginTime.atZone(ZoneId.of("GMT")).dayOfWeek
+
         val filter = JpaCourseFilterData.create(
                 category = course.category,
                 courseType = course.courseType,
                 fullCourseName = course.name.fullName,
                 week = week,
+                dayOfWeek = dayOfWeek,
                 time = LocalTime.from(course.beginTime.atZone(ZoneId.of("GMT"))),
                 duration = course.duration
         )

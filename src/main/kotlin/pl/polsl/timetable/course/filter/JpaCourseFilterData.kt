@@ -2,6 +2,7 @@ package pl.polsl.timetable.course.filter
 
 import pl.polsl.timetable.course.CourseType
 import pl.polsl.timetable.course.category.JpaCategory
+import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalTime
 import javax.persistence.*
@@ -20,6 +21,9 @@ class JpaCourseFilterData(
 
         @Enumerated(EnumType.STRING)
         override val week: Week,
+
+        @Enumerated(EnumType.STRING)
+        override val dayOfWeek: DayOfWeek,
 
         private val durationMillis: Long,
 
@@ -49,6 +53,7 @@ class JpaCourseFilterData(
                 courseType: CourseType,
                 fullCourseName: String,
                 week: Week,
+                dayOfWeek: DayOfWeek,
                 time: LocalTime,
                 duration: Duration
         ): JpaCourseFilterData {
@@ -57,6 +62,7 @@ class JpaCourseFilterData(
                     courseType = courseType,
                     fullCourseName = fullCourseName,
                     week = week,
+                    dayOfWeek = dayOfWeek,
                     sqlTime = java.sql.Time.valueOf(time),
                     durationMillis = duration.toMillis()
             )
