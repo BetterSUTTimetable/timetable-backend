@@ -55,17 +55,29 @@ class DefaultCategoryCleaningService(
     private fun remove(jpaCategory: JpaCategory) {
         logger.trace("Removing ${jpaCategory.name} (${jpaCategory.id}) category!")
 
-        val subcategories = categoryRepository.findByParent(categoryRepository.findOne(jpaCategory.id))
+        try {
+            val subcategories = categoryRepository.findByParent(categoryRepository.findOne(jpaCategory.id))
 
-        if (subcategories.isEmpty()) {
-            courseRepository.deleteByCategory(categoryRepository.findOne(jpaCategory.id))
-            userRepository
-                    .findAll()
-                    .forEach { selectedCategoriesService.removeSelectedCategory(it, jpaCategory.id) }
-        } else {
-            subcategories.forEach{ remove(it) }
+            if (subcategories.isEmpty()) {
+                courseRepository.deleteByCategory(categoryRepository.findOne(jpaCategory.id))
+                userRepository
+                        .findAll()
+                        .forEach {
+                            try {
+                                if (selectedCategoriesService.selectedCategories(it).any { it.id == jpaCategory.id }) {
+                                    selectedCategoriesService.removeSelectedCategory(it, jpaCategory.id)
+                                }
+                            } catch (e: Exception) {
+                                logger.error("Failed to remove category $jpaCategory from user $it!", e)
+                            }
+                        }
+            } else {
+                subcategories.forEach { remove(it) }
+            }
+
+            categoryRepository.delete(jpaCategory.id)
+        } catch (e: Exception) {
+            logger.error("Failed to remove category $jpaCategory!", e)
         }
-
-        categoryRepository.delete(jpaCategory.id)
     }
 }
